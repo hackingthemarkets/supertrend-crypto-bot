@@ -8,8 +8,7 @@ import warnings
 import pprint
 import json
 import time
-from datetime import datetime
-from datetime import date
+from datetime import datetime, date
 
 pd.set_option('display.max_rows', None)
 warnings.filterwarnings('ignore')
