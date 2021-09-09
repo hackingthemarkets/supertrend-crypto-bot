@@ -1,3 +1,4 @@
+from logging import error
 import ccxt
 import config
 import schedule
@@ -10,8 +11,12 @@ warnings.filterwarnings('ignore')
 import numpy as np
 from datetime import datetime
 import time
+tckers = pd.read_csv("all_ticker_USDT.csv")
 
-exchange = ccxt.binanceus({
+tickers = tckers["ticker"]
+print(tickers)
+DATA_LIST = []
+exchange = ccxt.binance({
     "apiKey": config.BINANCE_API_KEY,
     "secret": config.BINANCE_SECRET_KEY
 })
@@ -60,46 +65,67 @@ def supertrend(df, period=7, atr_multiplier=3):
 
 in_position = False
 
-def check_buy_sell_signals(df):
+def check_buy_sell_signals(df,ticker):
     global in_position
 
-    print("checking for buy and sell signals")
-    print(df.tail(5))
+    #print("checking for buy and sell signals")
+    #print(df.tail(5))
     last_row_index = len(df.index) - 1
     previous_row_index = last_row_index - 1
 
     if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
-        print("changed to uptrend, buy")
+        #print("changed to uptrend, buy")
         if not in_position:
-            order = exchange.create_market_buy_order('ETH/USD', 0.05)
-            print(order)
+            
+
+            print("buy")
+
+            side ="/"
+            ticker = ticker.replace(side,'')
+            datafrem = [{"ticker":ticker}]
+
+            datafrem = pd.DataFrame(datafrem)
+            datafrem.to_csv("NEW_COINS.csv")
+            DATA = {"ticker":ticker}
+            DATA_LIST.append(DATA)
+            
             in_position = True
         else:
             print("already in position, nothing to do")
     
     if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
         if in_position:
-            print("changed to downtrend, sell")
-            order = exchange.create_market_sell_order('ETH/USD', 0.05)
-            print(order)
+            #print("changed to downtrend, sell")
+            
+            print(" sell")
             in_position = False
         else:
             print("You aren't in position, nothing to sell")
 
-def run_bot():
-    print(f"Fetching new bars for {datetime.now().isoformat()}")
-    bars = exchange.fetch_ohlcv('ETH/USDT', timeframe='1m', limit=100)
-    df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-
-    supertrend_data = supertrend(df)
-    
-    check_buy_sell_signals(supertrend_data)
 
 
-schedule.every(10).seconds.do(run_bot)
+
 
 
 while True:
-    schedule.run_pending()
-    time.sleep(1)
+    for ticker in tickers :
+        try:
+            AT =ticker[:-4]
+            BT =ticker[-4:]
+            ticker =AT+"/"+BT 
+            print("==========", ticker , "===============")
+
+            bars = exchange.fetch_ohlcv(ticker, timeframe='1d', limit=100)
+            df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+
+            supertrend_data = supertrend(df)
+            
+            check_buy_sell_signals(supertrend_data,ticker)
+            
+            
+            time.sleep(60)
+        except:
+            print(error)
+    dd = pd.DataFrame(DATA_LIST)
+    dd.to_csv("coins_in_posation.csv")
