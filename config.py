@@ -1,2 +1,4 @@
-BINANCE_API_KEY = 'yourbinanceapikey'
-BINANCE_SECRET_KEY = 'yourbinancesecretkey'
+BINANCE_API_KEY = 'key'
+BINANCE_SECRET_KEY = 'secret'
+TRADING_PAIR = 'SOL/EUR'
+POSITION_SIZE = '0.013'
