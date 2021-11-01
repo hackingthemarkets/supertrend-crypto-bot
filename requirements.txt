@@ -1,5 +1,5 @@
 ccxt==1.59.72
 schedule==1.1.0
 ta==0.7.0
-pandas==1.3.4
+pandas
 numpy

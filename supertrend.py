@@ -17,6 +17,14 @@ exchange = ccxt.binance({
     "secret": config.BINANCE_SECRET_KEY
 })
 
+def show_balance(wallets):
+
+    balance = exchange.fetch_balance()
+
+    for wallet in wallets:
+        print(f"{wallet} Free Balance: { balance[wallet]['free']}")
+
+
 def tr(data):
     data['previous_close'] = data['close'].shift(1)
     data['high-low'] = abs(data['high'] - data['low'])
@@ -64,8 +72,8 @@ in_position = False
 def check_buy_sell_signals(df):
     global in_position
 
-    print("checking for buy and sell signals")
-    print(df.tail(10))
+    print("Checking for buy and sell signals...")
+
     last_row_index = len(df.index) - 1
     previous_row_index = last_row_index - 1
 
@@ -76,8 +84,10 @@ def check_buy_sell_signals(df):
             print(order)
             in_position = True
         else:
-            print("already in position, nothing to do")
-    
+            print("!==> already in position, nothing to buy")
+    else:
+        print("<==> no buy signal found")
+
     if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
         if in_position:
             print("==> changed to downtrend, SELL!")
@@ -85,11 +95,15 @@ def check_buy_sell_signals(df):
             print(order)
             in_position = False
         else:
-            print("You aren't in position, nothing to sell")
+            print("!<== not in position, nothing to sell")
+    else:
+        print("<==> no sell signal found")
+
+    print(df.tail(5))
 
 def run_bot():
-    print(f"Fetching new bars for {datetime.now().isoformat()}")
-    bars = exchange.fetch_ohlcv(config.TRADING_PAIR, timeframe='1m', limit=365)
+    show_balance(['BTC', 'ETH', 'USDT', 'EUR'])
+    bars = exchange.fetch_ohlcv(config.TRADING_PAIR, timeframe=config.TIMEFRAME, limit=100)
     df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
