@@ -1,120 +1,156 @@
-import ccxt
-import config
-import schedule
+from threading import Thread
+import logging
 import pandas as pd
-
-pd.set_option('display.max_rows', None)
-
+import schedule
 import warnings
-warnings.filterwarnings('ignore')
-
-import numpy as np
-from datetime import datetime
 import time
 
-exchange = ccxt.binance({
-    "apiKey": config.BINANCE_API_KEY,
-    "secret": config.BINANCE_SECRET_KEY
-})
-
-def show_balance(wallets):
-
-    balance = exchange.fetch_balance()
-
-    for wallet in wallets:
-        print(f"{wallet} Free Balance: { balance[wallet]['free']}")
+pd.set_option('display.max_rows', None)
+warnings.filterwarnings('ignore')
+logging.basicConfig(filename="supertrend.log",  level=logging.INFO, format='[%(processName)s %(threadName)s] %(asctime)s %(message)s', datefmt='[%d.%m.%Y %H:%M:%S] -')
 
 
-def tr(data):
-    data['previous_close'] = data['close'].shift(1)
-    data['high-low'] = abs(data['high'] - data['low'])
-    data['high-pc'] = abs(data['high'] - data['previous_close'])
-    data['low-pc'] = abs(data['low'] - data['previous_close'])
+class Supertrend(Thread):
 
-    tr = data[['high-low', 'high-pc', 'low-pc']].max(axis=1)
+    def __init__(self, exchange_name, config, exchange, market, size):
+        Thread.__init__(self, name=(exchange_name + "_" + market.replace("/", "_")).lower())
+        self.in_position = False
+        self.config = config
+        self.exchange = exchange
+        self.exchange_name = exchange_name
+        self.market = market
+        self.size = size # position size: total amount to trade by this worker
+ 
 
-    return tr
+    def work(self):
+     
+        bars = self.exchange.fetch_ohlcv(self.market, self.config['timeframe'], limit=100)
+        df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
-def atr(data, period):
-    data['tr'] = tr(data)
-    atr = data['tr'].rolling(period).mean()
+        supertrend_data = Worker.supertrend(df)
 
-    return atr
+        self.check_buy_sell_signals(supertrend_data)
 
-def supertrend(df, period=7, atr_multiplier=3):
-    hl2 = (df['high'] + df['low']) / 2
-    df['atr'] = atr(df, period)
-    df['upperband'] = hl2 + (atr_multiplier * df['atr'])
-    df['lowerband'] = hl2 - (atr_multiplier * df['atr'])
-    df['in_uptrend'] = True
 
-    for current in range(1, len(df.index)):
-        previous = current - 1
+    @staticmethod
+    def supertrend(df, period=7, atr_multiplier=3):
+        hl2 = (df['high'] + df['low']) / 2
+        df['atr'] = Supertrend.atr(df, period)
+        df['upperband'] = hl2 + (atr_multiplier * df['atr'])
+        df['lowerband'] = hl2 - (atr_multiplier * df['atr'])
+        df['in_uptrend'] = True
 
-        if df['close'][current] > df['upperband'][previous]:
-            df['in_uptrend'][current] = True
-        elif df['close'][current] < df['lowerband'][previous]:
-            df['in_uptrend'][current] = False
-        else:
-            df['in_uptrend'][current] = df['in_uptrend'][previous]
+        for current in range(1, len(df.index)):
+            previous = current - 1
 
-            if df['in_uptrend'][current] and df['lowerband'][current] < df['lowerband'][previous]:
-                df['lowerband'][current] = df['lowerband'][previous]
+            if df['close'][current] > df['upperband'][previous]:
+                df['in_uptrend'][current] = True
+            elif df['close'][current] < df['lowerband'][previous]:
+                df['in_uptrend'][current] = False
+            else:
+                df['in_uptrend'][current] = df['in_uptrend'][previous]
 
-            if not df['in_uptrend'][current] and df['upperband'][current] > df['upperband'][previous]:
-                df['upperband'][current] = df['upperband'][previous]
+                if df['in_uptrend'][current] and df['lowerband'][current] < df['lowerband'][previous]:
+                    df['lowerband'][current] = df['lowerband'][previous]
+
+                if not df['in_uptrend'][current] and df['upperband'][current] > df['upperband'][previous]:
+                    df['upperband'][current] = df['upperband'][previous]
+            
+        return df
+
+
+    def check_buy_sell_signals(self, df):
+
         
-    return df
+        #logging.info(df.tail(3))
+        #print(df.tail(3))
+
+        last_row_index = len(df.index) - 1
+        previous_row_index = last_row_index - 1
+
+        if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
+            logging.info("==> Uptrend detected")
+            print("==> Uptrend detected")
+            if not self.in_position:
+                ticker = self.exchange.fetch_ticker(self.market)
+                last_price = ticker['info']['lastPrice']
+                position_size = self.buy_position_size(last_price)
+                #log.info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
+                print(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
+                order = self.exchange.create_market_buy_order(self.market, position_size)
+                #log.info(order)
+                print(order)
+                self.in_position = True
+            else:
+                #logging.info(":::::::::> Holding already a position in the market, nothing to buy")
+                print(":::::::::> Holding already a position in the market, nothing to buy")
+
+        if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
+            logging.info("==> Downtrend detected")
+            print("==> Downtrend detected")
+            if self.in_position:
+                balance = self.exchange.fetch_balance()
+                position_size = balance[self.market]['free']
+                #log.info(f":::::::::> Selling {position_size} {self.market} at market price")
+                print(f":::::::::> Selling {position_size} {self.market} at market price")
+                order = self.exchange.create_market_sell_order(self.market, position_size)
+                #log.info(order)
+                print(order)
+                self.in_position = False
+            else:
+                #logging.info(":::::::::> Do not hold a position in the market, nothing to sell")
+                print(":::::::::> Do not hold a position in the market, nothing to sell")
 
 
-in_position = False
+    @staticmethod
+    def atr(data, period):
+        data['tr'] = Supertrend.tr(data)
+        atr = data['tr'].rolling(period).mean()
 
-def check_buy_sell_signals(df):
-    global in_position
+        return atr
 
-    print("Checking for buy and sell signals...")
+    @staticmethod
+    def tr(data):
+        data['previous_close'] = data['close'].shift(1)
+        data['high-low'] = abs(data['high'] - data['low'])
+        data['high-pc'] = abs(data['high'] - data['previous_close'])
+        data['low-pc'] = abs(data['low'] - data['previous_close'])
 
-    last_row_index = len(df.index) - 1
-    previous_row_index = last_row_index - 1
+        tr = data[['high-low', 'high-pc', 'low-pc']].max(axis=1)
 
-    if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
-        print("==> changed to uptrend, BUY!")
-        if not in_position:
-            order = exchange.create_market_buy_order(config.TRADING_PAIR, config.POSITION_SIZE)
-            print(order)
-            in_position = True
-        else:
-            print("!==> already in position, nothing to buy")
-    else:
-        print("<==> no buy signal found")
+        return tr
 
-    if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
-        if in_position:
-            print("==> changed to downtrend, SELL!")
-            order = exchange.create_market_sell_order(config.TRADING_PAIR, config.POSITION_SIZE)
-            print(order)
-            in_position = False
-        else:
-            print("!<== not in position, nothing to sell")
-    else:
-        print("<==> no sell signal found")
+    def buy_position_size(self, last_price):
+        return self.size / float(last_price)
 
-    print(df.tail(5))
+    def run(self):
+        logging.info("####################################################################")
+        logging.info("#                                                                  #")
+        logging.info("#                    SUPERTREND TRADING BOT                        #")
+        logging.info("#                                                                  #")
+        logging.info("####################################################################")
+        logging.info("#                                                                  #")
+        logging.info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
+        logging.info(f"Currency: {self.config['currency']}")
+        logging.info(f"Market: {self.market}")
+        logging.info(f"Exchange: {self.exchange}")
+        logging.info(f"Position Size: {self.size}")
+        print("####################################################################")
+        print("#                                                                  #")
+        print("#                    SUPERTREND TRADING BOT                        #")
+        print("#                                                                  #")
+        print("####################################################################")
+        print("#                                                                  #")
+        print(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")        
+        print((f"Currency: {self.config['currency']}"))
+        print(f"Market: {self.market}")
+        print(f"Exchange: {self.exchange}")
+        print(f"Position Size: {self.size}")
 
-def run_bot():
-    show_balance(['BTC', 'ETH', 'USDT', 'EUR'])
-    bars = exchange.fetch_ohlcv(config.TRADING_PAIR, timeframe=config.TIMEFRAME, limit=100)
-    df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+        schedule.every(int(self.config['scheduleevery'])).seconds.do(self.work)
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
 
-    supertrend_data = supertrend(df)
     
-    check_buy_sell_signals(supertrend_data)
-
-
-schedule.every(60).seconds.do(run_bot)
-
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
