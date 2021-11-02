@@ -2,8 +2,10 @@ import configparser
 import ccxt
 from os import path
 import logging as log
-from supertrend import Supertrend
+from supertrend import Worker
 import time
+import logging
+import os
 
 class Bot():
 
@@ -32,9 +34,9 @@ class Bot():
             #3rd worker param (each item)
             markets = []
             for market in exchange.loadMarkets():
-                traded_currencies = config['tradedcurrencies'].split(',')
+                watchlist = config['wachtlist'].split(',')
                 currency = market.split('/')[0]
-                if(market.endswith('/'+ config['currency']) and currency in traded_currencies):
+                if(market.endswith('/'+ config['basecurrency']) and currency in watchlist):
                     markets.append(market)
 
             #4th worker param (each item)
@@ -48,15 +50,28 @@ class Bot():
 
             #5th worker param (each item)
             balance = exchange.fetch_balance()
-            free_balance = balance[config['currency']]['free']
-            size = (free_balance *  max(1, float(config['valueatrisk']))) / len(markets)
+            free_balance = balance[config['basecurrency']]['free']
+            size = (free_balance *  min(1, float(config['percentageatrisk']))) / len(markets)
 
             for market in markets:
                 ticker = tickers[market]['info']['lastPrice']
-                workers.append(Supertrend(config_section, config, exchange, market, size))
+                bot_id = config_section.lower() + "_" + market.replace("/", "_").lower()
+                logger = self.mylogger(bot_id)
+                workers.append(Worker(logger, bot_id, config_section, config, exchange, market, size))
 
         
         self.workers = workers
+     
+    #@staticmethod
+    def mylogger(self, bot_id):
+        logger = logging.getLogger(bot_id)
+        logger.setLevel(logging.INFO)
+        formatter = logging.Formatter('[%(threadName)s] %(asctime)s %(levelname)s:%(name)s:%(message)s')
+        file_handler = logging.FileHandler(os.path.join(bot_id + ".log"), 'w')
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+        return logger
+
 
     def run(self):
         for worker in self.workers:

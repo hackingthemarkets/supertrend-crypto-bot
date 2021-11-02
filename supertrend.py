@@ -1,5 +1,4 @@
 from threading import Thread
-import logging
 import pandas as pd
 import schedule
 import warnings
@@ -7,13 +6,13 @@ import time
 
 pd.set_option('display.max_rows', None)
 warnings.filterwarnings('ignore')
-logging.basicConfig(filename="supertrend.log",  level=logging.INFO, format='[%(processName)s %(threadName)s] %(asctime)s %(message)s', datefmt='[%d.%m.%Y %H:%M:%S] -')
+#logging.basicConfig(filename="supertrend.log",  level=logging.INFO, format='[%(threadName)s] %(asctime)s %(message)s', datefmt='[%d.%m.%Y %H:%M:%S] -')
 
+class Worker(Thread):
 
-class Supertrend(Thread):
-
-    def __init__(self, exchange_name, config, exchange, market, size):
-        Thread.__init__(self, name=(exchange_name + "_" + market.replace("/", "_")).lower())
+    def __init__(self, logger, bot_id, exchange_name, config, exchange, market, size):
+        Thread.__init__(self, name=bot_id)
+        self.logger = logger
         self.in_position = False
         self.config = config
         self.exchange = exchange
@@ -21,10 +20,9 @@ class Supertrend(Thread):
         self.market = market
         self.size = size # position size: total amount to trade by this worker
  
-
     def work(self):
      
-        bars = self.exchange.fetch_ohlcv(self.market, self.config['timeframe'], limit=100)
+        bars = self.exchange.fetch_ohlcv(self.market, self.config['barstimeframe'], limit=100)
         df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
@@ -36,7 +34,7 @@ class Supertrend(Thread):
     @staticmethod
     def supertrend(df, period=7, atr_multiplier=3):
         hl2 = (df['high'] + df['low']) / 2
-        df['atr'] = Supertrend.atr(df, period)
+        df['atr'] = Worker.atr(df, period)
         df['upperband'] = hl2 + (atr_multiplier * df['atr'])
         df['lowerband'] = hl2 - (atr_multiplier * df['atr'])
         df['in_uptrend'] = True
@@ -63,14 +61,14 @@ class Supertrend(Thread):
     def check_buy_sell_signals(self, df):
 
         
-        #logging.info(df.tail(3))
+        #self.logger.info(df.tail(3))
         #print(df.tail(3))
 
         last_row_index = len(df.index) - 1
         previous_row_index = last_row_index - 1
 
         if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
-            logging.info("==> Uptrend detected")
+            self.logger.info("==> Uptrend detected")
             print("==> Uptrend detected")
             if not self.in_position:
                 ticker = self.exchange.fetch_ticker(self.market)
@@ -83,11 +81,11 @@ class Supertrend(Thread):
                 print(order)
                 self.in_position = True
             else:
-                #logging.info(":::::::::> Holding already a position in the market, nothing to buy")
+                #self.logger.info(":::::::::> Holding already a position in the market, nothing to buy")
                 print(":::::::::> Holding already a position in the market, nothing to buy")
 
         if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
-            logging.info("==> Downtrend detected")
+            self.logger.info("==> Downtrend detected")
             print("==> Downtrend detected")
             if self.in_position:
                 balance = self.exchange.fetch_balance()
@@ -99,13 +97,13 @@ class Supertrend(Thread):
                 print(order)
                 self.in_position = False
             else:
-                #logging.info(":::::::::> Do not hold a position in the market, nothing to sell")
+                #self.logger.info(":::::::::> Do not hold a position in the market, nothing to sell")
                 print(":::::::::> Do not hold a position in the market, nothing to sell")
 
 
     @staticmethod
     def atr(data, period):
-        data['tr'] = Supertrend.tr(data)
+        data['tr'] = Worker.tr(data)
         atr = data['tr'].rolling(period).mean()
 
         return atr
@@ -125,17 +123,17 @@ class Supertrend(Thread):
         return self.size / float(last_price)
 
     def run(self):
-        logging.info("####################################################################")
-        logging.info("#                                                                  #")
-        logging.info("#                    SUPERTREND TRADING BOT                        #")
-        logging.info("#                                                                  #")
-        logging.info("####################################################################")
-        logging.info("#                                                                  #")
-        logging.info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
-        logging.info(f"Currency: {self.config['currency']}")
-        logging.info(f"Market: {self.market}")
-        logging.info(f"Exchange: {self.exchange}")
-        logging.info(f"Position Size: {self.size}")
+        self.logger.info("####################################################################")
+        self.logger.info("#                                                                  #")
+        self.logger.info("#                    SUPERTREND TRADING BOT                        #")
+        self.logger.info("#                                                                  #")
+        self.logger.info("####################################################################")
+        self.logger.info("#                                                                  #")
+        self.logger.info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
+        self.logger.info(f"Currency: {self.config['basecurrency']}")
+        self.logger.info(f"Market: {self.market}")
+        self.logger.info(f"Exchange: {self.exchange}")
+        self.logger.info(f"Position Size: {self.size}")
         print("####################################################################")
         print("#                                                                  #")
         print("#                    SUPERTREND TRADING BOT                        #")
@@ -143,12 +141,12 @@ class Supertrend(Thread):
         print("####################################################################")
         print("#                                                                  #")
         print(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")        
-        print((f"Currency: {self.config['currency']}"))
+        print((f"Currency: {self.config['basecurrency']}"))
         print(f"Market: {self.market}")
         print(f"Exchange: {self.exchange}")
         print(f"Position Size: {self.size}")
 
-        schedule.every(int(self.config['scheduleevery'])).seconds.do(self.work)
+        schedule.every(int(self.config['pullintervallinseconds'])).seconds.do(self.work)
         while True:
             schedule.run_pending()
             time.sleep(1)
