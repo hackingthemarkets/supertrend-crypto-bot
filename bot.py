@@ -53,25 +53,30 @@ class Bot():
             free_balance = balance[config['basecurrency']]['free']
             size = (free_balance *  min(1, float(config['percentageatrisk']))) / len(markets)
 
+            polling_interval = config['pollingintervalinseconds']
+            base_currency = config['basecurrency']
+            bars_timeframe = config['barstimeframe']
+            console_output = config.getboolean('consoleoutput')
+            dataframe_logging = config.getboolean('dataframelogging')
+            file_output = config.getboolean('fileoutput')
+
             for market in markets:
                 ticker = tickers[market]['info']['lastPrice']
                 bot_id = config_section.lower() + "_" + market.replace("/", "_").lower()
-                logger = self.mylogger(bot_id)
-                workers.append(Worker(logger, bot_id, config_section, config, exchange, market, size))
+                logger = self.mylogger('supertrend', bot_id)
+                workers.append(Worker(console_output, dataframe_logging, file_output, polling_interval, base_currency, bars_timeframe, logger, bot_id, config_section, exchange, market, size))
 
         
         self.workers = workers
      
-    #@staticmethod
-    def mylogger(self, bot_id):
-        logger = logging.getLogger(bot_id)
+    def mylogger(self, strategy, bot_id):
+        logger = logging.getLogger(strategy)
         logger.setLevel(logging.INFO)
-        formatter = logging.Formatter('[%(threadName)s] %(asctime)s %(levelname)s:%(name)s:%(message)s')
-        file_handler = logging.FileHandler(os.path.join(bot_id + ".log"), 'w')
+        formatter = logging.Formatter('[%(threadName)s:%(name)s] %(asctime)s %(levelname)s:\t%(message)s')
+        file_handler = logging.FileHandler(os.path.join(bot_id + ".log"), 'a')
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
         return logger
-
 
     def run(self):
         for worker in self.workers:

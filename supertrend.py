@@ -6,28 +6,29 @@ import time
 
 pd.set_option('display.max_rows', None)
 warnings.filterwarnings('ignore')
-#logging.basicConfig(filename="supertrend.log",  level=logging.INFO, format='[%(threadName)s] %(asctime)s %(message)s', datefmt='[%d.%m.%Y %H:%M:%S] -')
 
 class Worker(Thread):
 
-    def __init__(self, logger, bot_id, exchange_name, config, exchange, market, size):
-        Thread.__init__(self, name=bot_id)
+    def __init__(self, coutput, dflogging, foutput, interval, currency, timeframe, logger, bot_id, ex_name, exchange, market, size):
+        Thread.__init__(self, name = 'thread-' + bot_id.replace('_', '-'))
         self.logger = logger
         self.in_position = False
-        self.config = config
+        self.polling_interval = interval
+        self.base_currency = currency
+        self.bars_timeframe = timeframe
         self.exchange = exchange
-        self.exchange_name = exchange_name
+        self.exchange_name = ex_name
         self.market = market
         self.size = size # position size: total amount to trade by this worker
- 
+        self.console_output = coutput
+        self.dataframe_logging = dflogging
+        self.file_output = foutput
+
     def work(self):
-     
-        bars = self.exchange.fetch_ohlcv(self.market, self.config['barstimeframe'], limit=100)
+        bars = self.exchange.fetch_ohlcv(self.market, self.bars_timeframe, limit=100)
         df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-
         supertrend_data = Worker.supertrend(df)
-
         self.check_buy_sell_signals(supertrend_data)
 
 
@@ -60,45 +61,63 @@ class Worker(Thread):
 
     def check_buy_sell_signals(self, df):
 
-        
-        #self.logger.info(df.tail(3))
-        #print(df.tail(3))
+        if self.dataframe_logging:
+            if self.file_output:
+                self.logger.info(df.tail(3))
+            if self.console_output:
+                print(df.tail(3))
 
         last_row_index = len(df.index) - 1
         previous_row_index = last_row_index - 1
 
         if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
-            self.logger.info("==> Uptrend detected")
-            print("==> Uptrend detected")
+            if self.file_output:
+                self.logger.info("==> Uptrend detected")
+            if self.console_output:
+                print("==> Uptrend detected")
             if not self.in_position:
                 ticker = self.exchange.fetch_ticker(self.market)
                 last_price = ticker['info']['lastPrice']
                 position_size = self.buy_position_size(last_price)
-                #log.info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
-                print(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
+                if self.file_output:
+                    self.logger.info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
+                if self.console_output:
+                    print(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
                 order = self.exchange.create_market_buy_order(self.market, position_size)
-                #log.info(order)
-                print(order)
+                if self.file_output:
+                    self.logger.info(order)
+                if self.console_output:
+                    print(order)
                 self.in_position = True
             else:
-                #self.logger.info(":::::::::> Holding already a position in the market, nothing to buy")
-                print(":::::::::> Holding already a position in the market, nothing to buy")
+                if self.file_output:
+                    self.logger.info(":::::::::> Holding already a position in the market, nothing to buy")
+                if self.console_output:
+                    print(":::::::::> Holding already a position in the market, nothing to buy")
 
         if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
-            self.logger.info("==> Downtrend detected")
-            print("==> Downtrend detected")
+            if self.file_output:
+                self.logger.info("==> Downtrend detected")
+            if self.console_output:
+                print("==> Downtrend detected")
             if self.in_position:
                 balance = self.exchange.fetch_balance()
                 position_size = balance[self.market]['free']
-                #log.info(f":::::::::> Selling {position_size} {self.market} at market price")
-                print(f":::::::::> Selling {position_size} {self.market} at market price")
+                if self.file_output:
+                    self.logger.info(f":::::::::> Selling {position_size} {self.market} at market price")
+                if self.console_output:
+                    print(f":::::::::> Selling {position_size} {self.market} at market price")
                 order = self.exchange.create_market_sell_order(self.market, position_size)
-                #log.info(order)
-                print(order)
+                if self.file_output:
+                    self.logger.info(order)
+                if self.console_output:
+                    print(order)
                 self.in_position = False
             else:
-                #self.logger.info(":::::::::> Do not hold a position in the market, nothing to sell")
-                print(":::::::::> Do not hold a position in the market, nothing to sell")
+                if self.file_output:
+                    self.logger.info(":::::::::> Do not hold a position in the market, nothing to sell")
+                if self.console_output:
+                    print(":::::::::> Do not hold a position in the market, nothing to sell")
 
 
     @staticmethod
@@ -123,30 +142,32 @@ class Worker(Thread):
         return self.size / float(last_price)
 
     def run(self):
-        self.logger.info("####################################################################")
-        self.logger.info("#                                                                  #")
-        self.logger.info("#                    SUPERTREND TRADING BOT                        #")
-        self.logger.info("#                                                                  #")
-        self.logger.info("####################################################################")
-        self.logger.info("#                                                                  #")
-        self.logger.info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
-        self.logger.info(f"Currency: {self.config['basecurrency']}")
-        self.logger.info(f"Market: {self.market}")
-        self.logger.info(f"Exchange: {self.exchange}")
-        self.logger.info(f"Position Size: {self.size}")
-        print("####################################################################")
-        print("#                                                                  #")
-        print("#                    SUPERTREND TRADING BOT                        #")
-        print("#                                                                  #")
-        print("####################################################################")
-        print("#                                                                  #")
-        print(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")        
-        print((f"Currency: {self.config['basecurrency']}"))
-        print(f"Market: {self.market}")
-        print(f"Exchange: {self.exchange}")
-        print(f"Position Size: {self.size}")
+        if self.file_output:
+            self.logger.info("####################################################################")
+            self.logger.info("#                                                                  #")
+            self.logger.info("#                    SUPERTREND TRADING BOT                        #")
+            self.logger.info("#                                                                  #")
+            self.logger.info("####################################################################")
+            self.logger.info("                                                                    ")
+            self.logger.info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
+            self.logger.info(f"Currency: {self.base_currency}")
+            self.logger.info(f"Market: {self.market}")
+            self.logger.info(f"Exchange: {self.exchange}")
+            self.logger.info(f"Position Size: {self.size}")
+        if self.console_output:
+            print("####################################################################")
+            print("#                                                                  #")
+            print("#                    SUPERTREND TRADING BOT                        #")
+            print("#                                                                  #")
+            print("####################################################################")
+            print("                                                                    ")
+            print(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")        
+            print((f"Currency: {self.base_currency}"))
+            print(f"Market: {self.market}")
+            print(f"Exchange: {self.exchange}")
+            print(f"Position Size: {self.size}")
 
-        schedule.every(int(self.config['pullintervallinseconds'])).seconds.do(self.work)
+        schedule.every(int(self.polling_interval)).seconds.do(self.work)
         while True:
             schedule.run_pending()
             time.sleep(1)
