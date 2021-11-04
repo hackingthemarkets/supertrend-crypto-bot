@@ -1,13 +1,13 @@
-# Multithreading Supertrend Crypto Bot (MSCB)
+# Multithreading Supertrend Crypto Trader (MSCT)
 
 ## Get Started
-Following steps must be completed to get the MSCB up und running:
+Following steps must be completed to get the MSCT up und running:
 - API key and secret from your crypto exchange
 - Rename the `settings.example.conf` file to `settings.conf`
 - Set your api key in the corespecding section of the settings file
 - Adjust oder variable in the setting according to your needs
 - Run `pip3 install -r requirements.txt` from the project root to install the required packages
-- Run `python3 bot.py` to start MSCB
+- Run `python3 bot.py` to start MSCT
 
 ## TODO
 
