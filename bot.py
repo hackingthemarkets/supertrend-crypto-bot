@@ -71,6 +71,7 @@ class Bot():
 
             if minimum_order_size > size:
                 # log proper message
+                print(f"too small minimal position size - minimum: {minimum_order_size} current: {size}")
                 break
 
             for market in markets:

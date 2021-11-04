@@ -72,7 +72,7 @@ class Worker(Thread):
                 self.log_info(":::::::::> Target profit reached")
                 self.log_info(f":::::::::> Target price: {target_sell_price} | buy price: {self.last_buy_order_price} | actual price: {actual_market_price}")
                 self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
-                
+                # TODO change this to OCO order
                 order = self.exchange.create_market_sell_order(self.market, position_size)
                 self.last_buy_order_price = float(0)
                 self.in_position = False
@@ -84,7 +84,6 @@ class Worker(Thread):
         previous_row_index = last_row_index - 1
 
         if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
-            
             self.log_info("==> Uptrend detected")
             
             if not self.in_position:
@@ -94,34 +93,29 @@ class Worker(Thread):
                 if position_size < self.minimum_order_size:
                     self.log_warning(f"Order size less than the expected minimum of {self.minimum_order_size} {self.base_currency}")
                     
+                self.log_info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
+                order = {}
+            
+                try:
+                    order = self.exchange.create_market_buy_order(self.market, position_size)
+                except Exception as e:
+                    self.log_exception(e)
+                    #send_email, telegram or whatsapp message
                 else:
-                    self.log_info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
-                    
-                    order = {}
-                
-                    try:
-                        order = self.exchange.create_market_buy_order(self.market, position_size)
-                    except Exception as e:
-                        self.log_exception(e)
-                        #send_email, telegram or whatsapp message
-                    else:
-                        self.last_buy_order_price = float(order.cost)
-                        self.in_position = True
+                    self.last_buy_order_price = float(order['cost'])
+                    self.in_position = True
 
-                        self.log_info(order)
+                    self.log_info(order)
 
             else:
                 self.log_info(":::::::::> Holding already a position in the market, nothing to buy")
 
         if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
-            
             self.log_info("==> Downtrend detected")
             
             if self.in_position:
                 position_size = self.free_balance()
-                
                 self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
-                
                 order = {}
 
                 try:
@@ -188,7 +182,7 @@ class Worker(Thread):
     def run(self):
         self.log_info("####################################################################")
         self.log_info("#                                                                  #")
-        self.log_info("#                    SUPERTREND TRADING BOT                        #")
+        self.log_info("#         MULTITHREADING SUPERTREND CRYPTO TRADER (MSCT)           #")
         self.log_info("#                                                                  #")
         self.log_info("####################################################################")
         self.log_info("                                                                    ")
@@ -202,5 +196,3 @@ class Worker(Thread):
         while True:
             schedule.run_pending()
             time.sleep(1)
-
-    
