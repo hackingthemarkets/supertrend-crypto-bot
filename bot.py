@@ -37,9 +37,6 @@ class Bot():
                 api_key = config['apikeysandbox']
                 api_secret = config['apisecretsandbox']
 
-            print(api_key)
-            print(api_secret)
-
             exchange = exchange_cls({
                 'apiKey': api_key,
                 'secret': api_secret
