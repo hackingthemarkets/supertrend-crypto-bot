@@ -63,14 +63,14 @@ class Worker(Thread):
 
     def check_buy_sell_signals(self, df):
         if self.in_position and self.last_buy_order_price > float(0):
-            
             target_sell_price = (1 + self.target_take_profit) * self.last_buy_order_price
             actual_market_price = self.last_price()
             
             if target_sell_price >= actual_market_price:
                 position_size = self.free_balance()
                 
-                self.log_info(f":::::::::> Target Price: {target_sell_price} | Buy Price: {self.last_buy_order_price} | Actual Price: {actual_market_price}")
+                self.log_info(":::::::::> Target profit reached")
+                self.log_info(f":::::::::> Target price: {target_sell_price} | buy price: {self.last_buy_order_price} | actual price: {actual_market_price}")
                 self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
                 
                 order = self.exchange.create_market_sell_order(self.market, position_size)
@@ -92,7 +92,7 @@ class Worker(Thread):
                 position_size = self.buy_position_size(last_price)
                 
                 if position_size < self.minimum_order_size:
-                    self.log_warning(f"order size less than the expected minimum of {self.minimum_order_size} {self.base_currency}")
+                    self.log_warning(f"Order size less than the expected minimum of {self.minimum_order_size} {self.base_currency}")
                     
                 else:
                     self.log_info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
@@ -161,11 +161,11 @@ class Worker(Thread):
 
     def last_price(self):
         ticker = self.exchange.fetch_ticker(self.market)
-        return ticker['info']['lastPrice']
+        return float(ticker['info']['lastPrice'])
 
     def free_balance(self):
         balance = self.exchange.fetch_balance()
-        return balance[self.market]['free']
+        return balance[self.base_currency]['free']
     
     def log_info(self, message):
         if self.file_output:
@@ -196,7 +196,7 @@ class Worker(Thread):
         self.log_info(f"Currency: {self.base_currency}")
         self.log_info(f"Market: {self.market}")
         self.log_info(f"Exchange: {self.exchange}")
-        self.log_info(f"Position Size: {self.size}")
+        self.log_info(f"Position: {self.size}")
 
         schedule.every(int(self.polling_interval)).seconds.do(self.work)
         while True:
