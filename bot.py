@@ -30,12 +30,15 @@ class Bot():
             api_key = ''
             api_secret = ''
 
-            if sandbox_mode:
+            if not sandbox_mode:
                 api_key = config['apikey']
                 api_secret = config['apisecret']
             else:
                 api_key = config['apikeysandbox']
                 api_secret = config['apisecretsandbox']
+
+            print(api_key)
+            print(api_secret)
 
             exchange = exchange_cls({
                 'apiKey': api_key,
