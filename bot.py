@@ -1,5 +1,4 @@
 import configparser
-#from configobj import ConfigObj
 import ccxt
 from os import path
 import logging as log
@@ -14,12 +13,6 @@ class Bot():
         config_parser = configparser.ConfigParser()
         settings_path = path.abspath("settings.conf")
         config_parser.read(settings_path)
-
-        #config_obj = ConfigObj(settings_path)
-        #test = config_obj['binance']
-        
-        #print(test)
-        #print(config_obj)
 
         workers = []
 
@@ -39,10 +32,6 @@ class Bot():
 
             sandbox_mode = config.getboolean('sandboxmode')
             exchange.set_sandbox_mode(sandbox_mode)
-
-            #ticker = exchange.fetch("ETH/EUR")
-            #print(ticker)
-            #break
 
             markets = []
             
