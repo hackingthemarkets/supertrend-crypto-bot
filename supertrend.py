@@ -173,12 +173,12 @@ class Worker(Thread):
             print(exception)
     
     def run(self):
-        self.log_info("####################################################################")
-        self.log_info("#                                                                  #")
-        self.log_info("#         MULTITHREADING SUPERTREND CRYPTO TRADER (MSCT)           #")
-        self.log_info("#                                                                  #")
-        self.log_info("####################################################################")
-        self.log_info("                                                                    ")
+        # self.log_info("####################################################################")
+        # self.log_info("#                                                                  #")
+        # self.log_info("#         MULTITHREADING SUPERTREND CRYPTO TRADER (MSCT)           #")
+        # self.log_info("#                                                                  #")
+        # self.log_info("####################################################################")
+        # self.log_info("                                                                    ")
         self.log_info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
         self.log_info(f"Currency: {self.base_currency}")
         self.log_info(f"Market: {self.market}")
