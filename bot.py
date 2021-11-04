@@ -25,12 +25,23 @@ class Bot():
 
             exchange_cls = getattr(ccxt, config_section)
 
+            sandbox_mode = config.getboolean('sandboxmode')
+
+            api_key = ''
+            api_secret = ''
+
+            if sandbox_mode:
+                api_key = config['apikey']
+                api_secret = config['apisecret']
+            else:
+                api_key = config['apikeysandbox']
+                api_secret = config['apisecretsandbox']
+
             exchange = exchange_cls({
-                'apiKey': config['apikey'],
-                'secret': config['apisecret']
+                'apiKey': api_key,
+                'secret': api_secret
             })
 
-            sandbox_mode = config.getboolean('sandboxmode')
             exchange.set_sandbox_mode(sandbox_mode)
 
             markets = []
@@ -51,7 +62,7 @@ class Bot():
             console_output = config.getboolean('consoleoutput')
             dataframe_logging = config.getboolean('dataframelogging')
             file_output = config.getboolean('fileoutput')
-            take_profit = config['takeprofit']
+            take_profit = float(config['takeprofit'])
             minimum_order_size = float(config['minimumordersize'])
 
             balance = exchange.fetch_balance()
