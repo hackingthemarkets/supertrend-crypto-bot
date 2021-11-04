@@ -53,11 +53,8 @@ class Bot():
                     markets.append(market)
 
             if len(markets) == 0:
+                # log proper message
                 break
-
-            balance = exchange.fetch_balance()
-            free_balance = balance[config['basecurrency']]['free']
-            size = (free_balance *  min(1, float(config['percentageatrisk']))) / len(markets)
 
             polling_interval = config['pollinginterval']
             base_currency = config['basecurrency']
@@ -67,6 +64,14 @@ class Bot():
             file_output = config.getboolean('fileoutput')
             take_profit = config['takeprofit']
             minimum_order_size = float(config['minimumordersize'])
+
+            balance = exchange.fetch_balance()
+            free_balance = balance[config['basecurrency']]['free']
+            size = (free_balance *  min(1, float(config['percentageatrisk']))) / float(len(markets))
+
+            if minimum_order_size > size:
+                # log proper message
+                break
 
             for market in markets:
                 bot_id = config_section.lower() + "_" + market.replace("/", "_").lower()
