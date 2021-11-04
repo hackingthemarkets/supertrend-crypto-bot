@@ -52,6 +52,9 @@ class Bot():
                 if(market.endswith('/'+ config['basecurrency']) and currency in watchlist):
                     markets.append(market)
 
+            if len(markets) == 0:
+                break
+
             balance = exchange.fetch_balance()
             free_balance = balance[config['basecurrency']]['free']
             size = (free_balance *  min(1, float(config['percentageatrisk']))) / len(markets)
@@ -63,7 +66,7 @@ class Bot():
             dataframe_logging = config.getboolean('dataframelogging')
             file_output = config.getboolean('fileoutput')
             take_profit = config['takeprofit']
-            minimum_order_size = float(config_parser[config_section + "." + base_currency]['minimumordersize'])
+            minimum_order_size = float(config['minimumordersize'])
 
             for market in markets:
                 bot_id = config_section.lower() + "_" + market.replace("/", "_").lower()
