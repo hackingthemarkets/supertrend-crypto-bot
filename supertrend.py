@@ -98,15 +98,11 @@ class Worker(Thread):
             
                 try:
                     order = self.exchange.create_market_buy_order(self.market, position_size)
-                except Exception as e:
-                    self.log_exception(e)
-                    #send_email, telegram or whatsapp message
-                else:
                     self.last_buy_order_price = float(order['cost'])
                     self.in_position = True
-
                     self.log_info(order)
-
+                except Exception as e:
+                    self.log_exception(e)
             else:
                 self.log_info(":::::::::> Holding already a position in the market, nothing to buy")
 
@@ -120,15 +116,12 @@ class Worker(Thread):
 
                 try:
                     order = self.exchange.create_market_sell_order(self.market, position_size)
+                    self.last_buy_order_price = float(0)
+                    self.in_position = False
+                    self.log_info(order)
                 except Exception as e:
                     self.log_exception(e)
                     #send_email, telegram or whatsapp message
-                else:   
-                    self.last_buy_order_price = float(0)
-                    self.in_position = False
-                    
-                    self.log_info(order)
-                
             else:
                 self.log_info(":::::::::> Do not hold a position in the market, nothing to sell")
 
