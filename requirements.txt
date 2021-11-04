@@ -3,3 +3,4 @@ schedule==1.1.0
 ta==0.7.0
 pandas
 numpy
+configobj==5.0.6

@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 
 class Worker(Thread):
 
-    def __init__(self, coutput, dflogging, foutput, interval, currency, timeframe, logger, bot_id, ex_name, exchange, market, size):
+    def __init__(self, mos, tp, coutput, dflogging, foutput, interval, currency, timeframe, logger, bot_id, ex_name, exchange, market, size):
         Thread.__init__(self, name = 'thread-' + bot_id.replace('_', '-'))
         self.logger = logger
         self.in_position = False
@@ -23,6 +23,9 @@ class Worker(Thread):
         self.console_output = coutput
         self.dataframe_logging = dflogging
         self.file_output = foutput
+        self.target_take_profit = tp
+        self.last_buy_order_price = float(0)
+        self.minimum_order_size = mos
 
     def work(self):
         bars = self.exchange.fetch_ohlcv(self.market, self.bars_timeframe, limit=100)
@@ -30,7 +33,6 @@ class Worker(Thread):
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
         supertrend_data = Worker.supertrend(df)
         self.check_buy_sell_signals(supertrend_data)
-
 
     @staticmethod
     def supertrend(df, period=7, atr_multiplier=3):
@@ -60,65 +62,81 @@ class Worker(Thread):
 
 
     def check_buy_sell_signals(self, df):
+        if self.in_position and self.last_buy_order_price > float(0):
+            
+            target_sell_price = (1 + self.target_take_profit) * self.last_buy_order_price
+            actual_market_price = self.last_price()
+            
+            if target_sell_price >= actual_market_price:
+                position_size = self.free_balance()
+                
+                self.log_info(f":::::::::> Target Price: {target_sell_price} | Buy Price: {self.last_buy_order_price} | Actual Price: {actual_market_price}")
+                self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
+                
+                order = self.exchange.create_market_sell_order(self.market, position_size)
+                self.last_buy_order_price = float(0)
+                self.in_position = False
 
         if self.dataframe_logging:
-            if self.file_output:
-                self.logger.info(df.tail(3))
-            if self.console_output:
-                print(df.tail(3))
+            self.log_info(df.tail(3))
 
         last_row_index = len(df.index) - 1
         previous_row_index = last_row_index - 1
 
         if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
-            if self.file_output:
-                self.logger.info("==> Uptrend detected")
-            if self.console_output:
-                print("==> Uptrend detected")
+            
+            self.log_info("==> Uptrend detected")
+            
             if not self.in_position:
-                ticker = self.exchange.fetch_ticker(self.market)
-                last_price = ticker['info']['lastPrice']
+                last_price = self.last_price()
                 position_size = self.buy_position_size(last_price)
-                if self.file_output:
-                    self.logger.info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
-                if self.console_output:
-                    print(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
-                order = self.exchange.create_market_buy_order(self.market, position_size)
-                if self.file_output:
-                    self.logger.info(order)
-                if self.console_output:
-                    print(order)
-                self.in_position = True
+                
+                if position_size < self.minimum_order_size:
+                    self.log_warning(f"order size less than the expected minimum of {self.minimum_order_size} {self.base_currency}")
+                    
+                else:
+                    self.log_info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
+                    
+                    order = {}
+                
+                    try:
+                        order = self.exchange.create_market_buy_order(self.market, position_size)
+                    except Exception as e:
+                        self.log_exception(e)
+                        #send_email, telegram or whatsapp message
+                    else:
+                        self.last_buy_order_price = float(order.cost)
+                        self.in_position = True
+
+                        self.log_info(order)
+
             else:
-                if self.file_output:
-                    self.logger.info(":::::::::> Holding already a position in the market, nothing to buy")
-                if self.console_output:
-                    print(":::::::::> Holding already a position in the market, nothing to buy")
+                self.log_info(":::::::::> Holding already a position in the market, nothing to buy")
 
         if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
-            if self.file_output:
-                self.logger.info("==> Downtrend detected")
-            if self.console_output:
-                print("==> Downtrend detected")
+            
+            self.log_info("==> Downtrend detected")
+            
             if self.in_position:
-                balance = self.exchange.fetch_balance()
-                position_size = balance[self.market]['free']
-                if self.file_output:
-                    self.logger.info(f":::::::::> Selling {position_size} {self.market} at market price")
-                if self.console_output:
-                    print(f":::::::::> Selling {position_size} {self.market} at market price")
-                order = self.exchange.create_market_sell_order(self.market, position_size)
-                if self.file_output:
-                    self.logger.info(order)
-                if self.console_output:
-                    print(order)
-                self.in_position = False
-            else:
-                if self.file_output:
-                    self.logger.info(":::::::::> Do not hold a position in the market, nothing to sell")
-                if self.console_output:
-                    print(":::::::::> Do not hold a position in the market, nothing to sell")
+                position_size = self.free_balance()
+                
+                self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
+                
+                order = {}
 
+                try:
+                    order = self.exchange.create_market_sell_order(self.market, position_size)
+                except Exception as e:
+                    self.log_exception(e)
+                    #send_email, telegram or whatsapp message
+                else:   
+                    self.last_buy_order_price = float(0)
+                    self.in_position = False
+                    
+                    self.log_info(order)
+                
+            else:
+                self.log_info(":::::::::> Do not hold a position in the market, nothing to sell")
 
     @staticmethod
     def atr(data, period):
@@ -141,31 +159,44 @@ class Worker(Thread):
     def buy_position_size(self, last_price):
         return self.size / float(last_price)
 
-    def run(self):
+    def last_price(self):
+        ticker = self.exchange.fetch_ticker(self.market)
+        return ticker['info']['lastPrice']
+
+    def free_balance(self):
+        balance = self.exchange.fetch_balance()
+        return balance[self.market]['free']
+    
+    def log_info(self, message):
         if self.file_output:
-            self.logger.info("####################################################################")
-            self.logger.info("#                                                                  #")
-            self.logger.info("#                    SUPERTREND TRADING BOT                        #")
-            self.logger.info("#                                                                  #")
-            self.logger.info("####################################################################")
-            self.logger.info("                                                                    ")
-            self.logger.info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
-            self.logger.info(f"Currency: {self.base_currency}")
-            self.logger.info(f"Market: {self.market}")
-            self.logger.info(f"Exchange: {self.exchange}")
-            self.logger.info(f"Position Size: {self.size}")
+            self.logger.info(message)
         if self.console_output:
-            print("####################################################################")
-            print("#                                                                  #")
-            print("#                    SUPERTREND TRADING BOT                        #")
-            print("#                                                                  #")
-            print("####################################################################")
-            print("                                                                    ")
-            print(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")        
-            print((f"Currency: {self.base_currency}"))
-            print(f"Market: {self.market}")
-            print(f"Exchange: {self.exchange}")
-            print(f"Position Size: {self.size}")
+            print(message)
+
+    def log_warning(self, message):
+        if self.file_output:
+            self.logger.warning(message)
+        if self.console_output:
+            print(message)
+
+    def log_exception(self, exception):
+        if self.file_output:
+            self.logger.exception(exception)
+        if self.console_output:
+            print(exception)
+    
+    def run(self):
+        self.log_info("####################################################################")
+        self.log_info("#                                                                  #")
+        self.log_info("#                    SUPERTREND TRADING BOT                        #")
+        self.log_info("#                                                                  #")
+        self.log_info("####################################################################")
+        self.log_info("                                                                    ")
+        self.log_info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
+        self.log_info(f"Currency: {self.base_currency}")
+        self.log_info(f"Market: {self.market}")
+        self.log_info(f"Exchange: {self.exchange}")
+        self.log_info(f"Position Size: {self.size}")
 
         schedule.every(int(self.polling_interval)).seconds.do(self.work)
         while True:

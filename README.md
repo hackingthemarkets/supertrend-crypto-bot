@@ -9,6 +9,11 @@ Following steps must be completed to get the MSCB up und running:
 - Run `pip3 install -r requirements.txt` from the project root to install the required packages
 - Run `python3 bot.py` to start MSCB
 
+## TODO
+
+- Parametrize the stategy to execute for each market
+
+
 ## Special Note
 Special Thanks to Part Time Lary from sharing his knowledge. Don't hesistate to support him.
 

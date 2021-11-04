@@ -1,4 +1,5 @@
 import configparser
+#from configobj import ConfigObj
 import ccxt
 from os import path
 import logging as log
@@ -14,6 +15,12 @@ class Bot():
         settings_path = path.abspath("settings.conf")
         config_parser.read(settings_path)
 
+        #config_obj = ConfigObj(settings_path)
+        #test = config_obj['binance']
+        
+        #print(test)
+        #print(config_obj)
+
         workers = []
 
         for config_section in config_parser.sections():
@@ -21,59 +28,55 @@ class Bot():
             if not (config_section in ccxt.exchanges):
                 continue
             
-            #1st worker param
             config = config_parser[config_section]
 
             exchange_cls = getattr(ccxt, config_section)
-            #2nd worker param
+
             exchange = exchange_cls({
                 'apiKey': config['apikey'],
                 'secret': config['apisecret']
             })
-          
-            #3rd worker param (each item)
+
+            sandbox_mode = config.getboolean('sandboxmode')
+            exchange.set_sandbox_mode(sandbox_mode)
+
+            #ticker = exchange.fetch("ETH/EUR")
+            #print(ticker)
+            #break
+
             markets = []
+            
             for market in exchange.loadMarkets():
                 watchlist = config['wachtlist'].split(',')
                 currency = market.split('/')[0]
                 if(market.endswith('/'+ config['basecurrency']) and currency in watchlist):
                     markets.append(market)
 
-            #4th worker param (each item)
-            tickers = []
-            if (exchange.has['fetchTickers']):
-                tickers = exchange.fetch_tickers(markets)
-            else:
-                for market in markets:
-                    ticker = exchange.fetch_ticker(market)
-                    tickers.append(ticker)
-
-            #5th worker param (each item)
             balance = exchange.fetch_balance()
             free_balance = balance[config['basecurrency']]['free']
             size = (free_balance *  min(1, float(config['percentageatrisk']))) / len(markets)
 
-            polling_interval = config['pollingintervalinseconds']
+            polling_interval = config['pollinginterval']
             base_currency = config['basecurrency']
             bars_timeframe = config['barstimeframe']
             console_output = config.getboolean('consoleoutput')
             dataframe_logging = config.getboolean('dataframelogging')
             file_output = config.getboolean('fileoutput')
+            take_profit = config['takeprofit']
+            minimum_order_size = float(config_parser[config_section + "." + base_currency]['minimumordersize'])
 
             for market in markets:
-                ticker = tickers[market]['info']['lastPrice']
                 bot_id = config_section.lower() + "_" + market.replace("/", "_").lower()
                 logger = self.mylogger('supertrend', bot_id)
-                workers.append(Worker(console_output, dataframe_logging, file_output, polling_interval, base_currency, bars_timeframe, logger, bot_id, config_section, exchange, market, size))
-
+                workers.append(Worker(minimum_order_size, take_profit, console_output, dataframe_logging, file_output, polling_interval, base_currency, bars_timeframe, logger, bot_id, config_section, exchange, market, size))
         
         self.workers = workers
-     
+    
     def mylogger(self, strategy, bot_id):
         logger = logging.getLogger(strategy)
         logger.setLevel(logging.INFO)
         formatter = logging.Formatter('[%(threadName)s:%(name)s] %(asctime)s %(levelname)s:\t%(message)s')
-        file_handler = logging.FileHandler(os.path.join(bot_id + ".log"), 'a')
+        file_handler = logging.FileHandler(os.path.join(bot_id + ".log"), 'w')
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
         return logger
