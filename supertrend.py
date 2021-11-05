@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 
 class Worker(Thread):
 
-    def __init__(self, mos, tp, coutput, dflogging, foutput, interval, currency, timeframe, logger, bot_id, ex_name, exchange, market, size):
+    def __init__(self, sb_mode, mos, tp, coutput, dflogging, foutput, interval, currency, timeframe, logger, bot_id, ex_name, exchange, market, size):
         Thread.__init__(self, name = 'thread-' + bot_id.replace('_', '-'))
         self.logger = logger
         self.in_position = False
@@ -26,6 +26,7 @@ class Worker(Thread):
         self.target_take_profit = tp
         self.last_buy_order_price = float(0)
         self.minimum_order_size = mos
+        self.is_sandbox_mode = sb_mode
 
     def work(self):
         bars = self.exchange.fetch_ohlcv(self.market, self.bars_timeframe, limit=100)
@@ -173,11 +174,13 @@ class Worker(Thread):
             print(exception)
     
     def run(self):
+        self.log_info(f"Live Mode: {not self.is_sandbox_mode}")
         self.log_info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
         self.log_info(f"Currency: {self.base_currency}")
         self.log_info(f"Market: {self.market}")
         self.log_info(f"Exchange: {self.exchange}")
         self.log_info(f"Position: {self.size}")
+        self.log_info(f"------------------------------------------------------------------------------")
 
         schedule.every(int(self.polling_interval)).seconds.do(self.work)
         while True:

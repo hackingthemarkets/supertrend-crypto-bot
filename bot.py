@@ -77,7 +77,7 @@ class Bot():
             for market in markets:
                 bot_id = config_section.lower() + "_" + market.replace("/", "_").lower()
                 logger = self.mylogger('supertrend', bot_id)
-                workers.append(Worker(minimum_order_size, take_profit, console_output, dataframe_logging, file_output, polling_interval, base_currency, bars_timeframe, logger, bot_id, config_section, exchange, market, size))
+                workers.append(Worker(sandbox_mode, minimum_order_size, take_profit, console_output, dataframe_logging, file_output, polling_interval, base_currency, bars_timeframe, logger, bot_id, config_section, exchange, market, size))
         
         self.workers = workers
     
