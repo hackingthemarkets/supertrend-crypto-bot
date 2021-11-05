@@ -45,9 +45,8 @@ class Bot():
             exchange.set_sandbox_mode(sandbox_mode)
 
             markets = []
-            
+            watchlist = config['wachtlist'].split(',')
             for market in exchange.loadMarkets():
-                watchlist = config['wachtlist'].split(',')
                 currency = market.split('/')[0]
                 if(market.endswith('/'+ config['basecurrency']) and currency in watchlist):
                     markets.append(market)
@@ -82,7 +81,7 @@ class Bot():
         self.workers = workers
     
     def mylogger(self, strategy, bot_id):
-        logger = logging.getLogger(strategy)
+        logger = logging.getLogger(bot_id)
         logger.setLevel(logging.INFO)
         formatter = logging.Formatter('[%(threadName)s:%(name)s] %(asctime)s %(levelname)s:\t%(message)s')
         file_handler = logging.FileHandler(os.path.join(bot_id + ".log"), 'w')
