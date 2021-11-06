@@ -1,32 +1,36 @@
+import time
+import warnings
 from threading import Thread
+
 import pandas as pd
 import schedule
-import warnings
-import time
 
 pd.set_option('display.max_rows', None)
 warnings.filterwarnings('ignore')
 
+
 class Worker(Thread):
 
-    def __init__(self, sb_mode, mos, tp, coutput, dflogging, foutput, interval, currency, timeframe, logger, bot_id, ex_name, exchange, market, size):
-        Thread.__init__(self, name = 'thread-' + bot_id.replace('_', '-'))
+    def __init__(self, sandbox_mode, min_order_size, take_profit, console_output, dataframe_logging, file_output,
+                 interval, currency, timeframe, logger, bot_id,
+                 exchange_name, exchange_obj, market, size):
+        Thread.__init__(self, name='thread-' + bot_id.replace('_', '-'))
         self.logger = logger
         self.in_position = False
         self.polling_interval = interval
         self.base_currency = currency
         self.bars_timeframe = timeframe
-        self.exchange = exchange
-        self.exchange_name = ex_name
+        self.exchange = exchange_obj
+        self.exchange_name = exchange_name
         self.market = market
-        self.size = size # position size: total amount to trade by this worker
-        self.console_output = coutput
-        self.dataframe_logging = dflogging
-        self.file_output = foutput
-        self.target_take_profit = tp
+        self.size = size  # position size: total amount to trade by this worker
+        self.console_output = console_output
+        self.dataframe_logging = dataframe_logging
+        self.file_output = file_output
+        self.target_take_profit = take_profit
         self.last_buy_order_price = float(0)
-        self.minimum_order_size = mos
-        self.is_sandbox_mode = sb_mode
+        self.minimum_order_size = min_order_size
+        self.is_sandbox_mode = sandbox_mode
 
     def work(self):
         bars = self.exchange.fetch_ohlcv(self.market, self.bars_timeframe, limit=100)
@@ -58,25 +62,31 @@ class Worker(Thread):
 
                 if not df['in_uptrend'][current] and df['upperband'][current] > df['upperband'][previous]:
                     df['upperband'][current] = df['upperband'][previous]
-            
-        return df
 
+        return df
 
     def check_buy_sell_signals(self, df):
         if self.in_position and self.last_buy_order_price > float(0):
             target_sell_price = (1 + self.target_take_profit) * self.last_buy_order_price
             actual_market_price = self.last_price()
-            
+
             if target_sell_price >= actual_market_price:
                 position_size = self.free_balance()
-                
-                self.log_info(":::::::::> Target profit reached")
-                self.log_info(f":::::::::> Target price: {target_sell_price} | buy price: {self.last_buy_order_price} | actual price: {actual_market_price}")
+
+                self.log_info(":::::::::> Target profit reached!")
+                self.log_info(f":::::::::> Target price: {target_sell_price}")
+                self.log_info(f":::::::::> Purchase price: {self.last_buy_order_price}")
+                self.log_info(f":::::::::> Actual price: {actual_market_price}")
                 self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
-                # TODO change this to OCO order
-                order = self.exchange.create_market_sell_order(self.market, position_size)
-                self.last_buy_order_price = float(0)
-                self.in_position = False
+                try:
+                    # TODO change this to OCO order
+                    sell_oco_order = self.exchange.create_market_sell_order(self.market, position_size)
+                except Exception as e:
+                    self.log_exception(e)
+                else:
+                    self.in_position = False
+                    self.last_buy_order_price = float(0)
+                    print(sell_oco_order)
 
         if self.dataframe_logging:
             self.log_info(df.tail(3))
@@ -86,43 +96,44 @@ class Worker(Thread):
 
         if not df['in_uptrend'][previous_row_index] and df['in_uptrend'][last_row_index]:
             self.log_info("==> Uptrend detected")
-            
+
             if not self.in_position:
                 last_price = self.last_price()
                 position_size = self.buy_position_size(last_price)
-                
+
                 if position_size < self.minimum_order_size:
-                    self.log_warning(f"Order size less than the expected minimum of {self.minimum_order_size} {self.base_currency}")
-                    
+                    self.log_warning(
+                        f"Order size less than the expected minimum of {self.minimum_order_size} {self.base_currency}")
+
                 self.log_info(f":::::::::> Buying {position_size} {self.market} at market price of {last_price}")
-                order = {}
-            
+
                 try:
-                    order = self.exchange.create_market_buy_order(self.market, position_size)
-                    self.last_buy_order_price = float(order['cost'])
-                    self.in_position = True
-                    self.log_info(order)
+                    buy_market_order = self.exchange.create_market_buy_order(self.market, position_size)
                 except Exception as e:
                     self.log_exception(e)
+                else:
+                    self.in_position = True
+                    self.log_info(buy_market_order)
+                    self.last_buy_order_price = float(buy_market_order['cost'])
+
             else:
                 self.log_info(":::::::::> Holding already a position in the market, nothing to buy")
 
         if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
             self.log_info("==> Downtrend detected")
-            
+
             if self.in_position:
                 position_size = self.free_balance()
                 self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
-                order = {}
-
                 try:
-                    order = self.exchange.create_market_sell_order(self.market, position_size)
-                    self.last_buy_order_price = float(0)
-                    self.in_position = False
-                    self.log_info(order)
+                    sell_market_order = self.exchange.create_market_sell_order(self.market, position_size)
                 except Exception as e:
                     self.log_exception(e)
-                    #send_email, telegram or whatsapp message
+                    # send_email, telegram or whatsapp message
+                else:
+                    self.in_position = False
+                    self.last_buy_order_price = float(0)
+                    self.log_info(sell_market_order)
             else:
                 self.log_info(":::::::::> Do not hold a position in the market, nothing to sell")
 
@@ -130,7 +141,6 @@ class Worker(Thread):
     def atr(data, period):
         data['tr'] = Worker.tr(data)
         atr = data['tr'].rolling(period).mean()
-
         return atr
 
     @staticmethod
@@ -139,9 +149,7 @@ class Worker(Thread):
         data['high-low'] = abs(data['high'] - data['low'])
         data['high-pc'] = abs(data['high'] - data['previous_close'])
         data['low-pc'] = abs(data['low'] - data['previous_close'])
-
         tr = data[['high-low', 'high-pc', 'low-pc']].max(axis=1)
-
         return tr
 
     def buy_position_size(self, last_price):
@@ -154,7 +162,7 @@ class Worker(Thread):
     def free_balance(self):
         balance = self.exchange.fetch_balance()
         return balance[self.base_currency]['free']
-    
+
     def log_info(self, message):
         if self.file_output:
             self.logger.info(message)
@@ -172,7 +180,7 @@ class Worker(Thread):
             self.logger.exception(exception)
         if self.console_output:
             print(exception)
-    
+
     def run(self):
         self.log_info(f"Live Mode: {not self.is_sandbox_mode}")
         self.log_info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
@@ -186,3 +194,4 @@ class Worker(Thread):
         while True:
             schedule.run_pending()
             time.sleep(1)
+
