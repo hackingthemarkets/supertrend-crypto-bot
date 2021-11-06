@@ -38,24 +38,29 @@ class Bot:
                 'secret': api_secret
             })
 
-            print(api_key)
-
             exchange.set_sandbox_mode(sandbox_mode)
-            markets = []
             watchlist = config['watchlist'].split(',')
-            all_markets = exchange.loadMarkets()
+            markets = []
+
+            try:
+                all_markets = exchange.loadMarkets()
+            except Exception as e:
+                print(e)
+                raise
 
             for market in all_markets:
                 currency = market.split('/')[0]
                 if market.endswith('/' + config['basecurrency']) and currency in watchlist:
                     markets.append(market)
 
+            base_currency = config['basecurrency']
+
             if len(markets) == 0:
                 # log proper message
+                print(f"Provided watchlist is empty or specified cryptos are not available under the {base_currency} market on {config_section} exchange")
                 break
 
             polling_interval = config['pollinginterval']
-            base_currency = config['basecurrency']
             bars_timeframe = config['barstimeframe']
             console_output = config.getboolean('consoleoutput')
             dataframe_logging = config.getboolean('dataframelogging')
@@ -64,7 +69,13 @@ class Bot:
             expected_minimum_order_size = float(config['minimumordersize'])
             num_markets = len(markets)
             unlocked_capital = float(config['unlockedcapital'])
-            balance = exchange.fetch_balance()
+
+            try:
+                balance = exchange.fetch_balance()
+            except Exception as e:
+                print(e)
+                raise
+
             free_balance = balance[base_currency]['free']
 
             allocated_position_per_market = self.position_sizing(free_balance, num_markets, unlocked_capital)
