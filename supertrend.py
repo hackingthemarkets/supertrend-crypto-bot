@@ -14,7 +14,7 @@ class Worker(Thread):
     def __init__(self, sandbox_mode, min_order_size, take_profit, console_output, dataframe_logging, file_output,
                  interval, currency, timeframe, logger, bot_id,
                  exchange_name, exchange_obj, market, size):
-        Thread.__init__(self, name='thread-' + bot_id.replace('_', '-'))
+        Thread.__init__(self, name='thread_' + bot_id)
         self.logger = logger
         self.in_position = False
         self.polling_interval = interval
@@ -31,6 +31,7 @@ class Worker(Thread):
         self.last_buy_order_price = float(0)
         self.minimum_order_size = min_order_size
         self.is_sandbox_mode = sandbox_mode
+        self.bot_id = bot_id
 
     def work(self):
         bars = self.exchange.fetch_ohlcv(self.market, self.bars_timeframe, limit=100)
@@ -183,7 +184,7 @@ class Worker(Thread):
 
     def run(self):
         self.log_info(f"Live Mode: {not self.is_sandbox_mode}")
-        self.log_info(f"Bot ID: {self.exchange_name + '_' + self.market.replace('/', '_').lower()}")
+        self.log_info(f"Bot ID: {self.bot_id}")
         self.log_info(f"Currency: {self.base_currency}")
         self.log_info(f"Market: {self.market}")
         self.log_info(f"Exchange: {self.exchange}")

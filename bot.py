@@ -66,7 +66,7 @@ class Bot:
             dataframe_logging = config.getboolean('dataframelogging')
             file_output = config.getboolean('fileoutput')
             take_profit = float(config['takeprofit'])
-            expected_minimum_order_size = float(config['minimumordersize'])
+            minimum_order_size = float(config['minimumordersize'])
             num_markets = len(markets)
             unlocked_capital = float(config['unlockedcapital'])
 
@@ -78,34 +78,38 @@ class Bot:
 
             free_balance = balance[base_currency]['free']
 
-            allocated_position_per_market = self.position_sizing(free_balance, num_markets, unlocked_capital)
+            allocation_per_market = Bot.position_sizing(free_balance, num_markets, unlocked_capital)
 
             print(f"Selected based currency: {base_currency}")
             print(f"Initial available capital: {free_balance}")
-            print(f"Number of available markets: {num_markets}")
+            print(f"Number of selected markets: {num_markets}")
             print(f"Percentage of capital unlock: {unlocked_capital}")
-            print(f"Allocated capital per market: {allocated_position_per_market}")
+            print(f"Allocated capital per market: {allocation_per_market}")
 
-            if expected_minimum_order_size > allocated_position_per_market:
+            if minimum_order_size > allocation_per_market:
                 # log proper message
                 print("Capital allocated per market is insufficient!")
-                print(f"Minimum capital allocation: {expected_minimum_order_size}")
-                print(f"Actual allocated capital: {allocated_position_per_market}")
+                print(f"Minimum capital allocation: {minimum_order_size}")
+                print(f"Actual allocated capital: {allocation_per_market}")
                 break
 
             for market in markets:
-                bot_id = config_section.lower() + "_" + market.replace("/", "_").lower()
+                bot_id = Bot.get_bot_id(config_section, market, sandbox_mode)
                 logger = self.build_logger(bot_id)
                 workers.append(
-                    Worker(sandbox_mode, expected_minimum_order_size, take_profit, console_output, dataframe_logging,
+                    Worker(sandbox_mode, minimum_order_size, take_profit, console_output, dataframe_logging,
                            file_output, polling_interval, base_currency, bars_timeframe, logger, bot_id, config_section,
-                           exchange, market, allocated_position_per_market))
+                           exchange, market, allocation_per_market))
 
         self.workers = workers
 
     @staticmethod
     def position_sizing(free_balance, num_markets, unlocked_capital):
         return (free_balance * min(1, unlocked_capital)) / float(num_markets)
+
+    @staticmethod
+    def get_bot_id(exchange_name: str, market: str, is_sandbox: bool): 
+        return exchange_name.lower() + "_" + market.replace("/", "_").lower() + ("_sandbox" if is_sandbox else "_live")
 
     @staticmethod
     def build_logger(bot_id):
