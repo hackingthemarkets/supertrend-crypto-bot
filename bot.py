@@ -104,6 +104,7 @@ class Bot:
 
         self.workers = workers
 
+
     @staticmethod
     def position_sizing(free_balance, num_markets, unlocked_capital):
         return (free_balance * min(1, unlocked_capital)) / float(num_markets)
