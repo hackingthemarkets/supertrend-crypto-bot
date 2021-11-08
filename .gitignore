@@ -1,3 +1,4 @@
 *.log
 settings.conf
-venv
+.idea/
+venv/
