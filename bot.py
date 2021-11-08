@@ -13,7 +13,7 @@ class Bot:
 
     def __init__(self):
         config_parser = configparser.ConfigParser()
-        settings_path = path.abspath("settings.conf")
+        settings_path = path.abspath("exchanges.conf")
         config_parser.read(settings_path)
 
         workers = []

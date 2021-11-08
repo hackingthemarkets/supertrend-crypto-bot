@@ -1,4 +1,5 @@
 *.log
-settings.conf
+exchanges.conf
+markets.conf
 .idea/
 venv/
