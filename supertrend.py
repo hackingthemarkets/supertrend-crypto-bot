@@ -32,6 +32,7 @@ class Worker(Thread):
         self.minimum_order_size = min_order_size
         self.is_sandbox_mode = sandbox_mode
         self.bot_id = bot_id
+        self.last_buy_order_qty = float(0)
 
     def work(self):
         bars = self.exchange.fetch_ohlcv(self.market, self.bars_timeframe, limit=100)
@@ -72,21 +73,21 @@ class Worker(Thread):
             actual_market_price = self.last_price()
 
             if target_sell_price >= actual_market_price:
-                position_size = self.free_balance()
 
                 self.log_info(":::::::::> Target profit reached!")
                 self.log_info(f":::::::::> Target price: {target_sell_price}")
                 self.log_info(f":::::::::> Purchase price: {self.last_buy_order_price}")
                 self.log_info(f":::::::::> Actual price: {actual_market_price}")
-                self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
+                self.log_info(f":::::::::> Selling {self.last_buy_order_qty} {self.market} at market price")
                 try:
                     # TODO change this to OCO order
-                    sell_oco_order = self.exchange.create_market_sell_order(self.market, position_size)
+                    sell_oco_order = self.exchange.create_market_sell_order(self.market, self.last_buy_order_qty)
                 except Exception as e:
                     self.log_exception(e)
                 else:
                     self.in_position = False
                     self.last_buy_order_price = float(0)
+                    self.last_buy_order_qty = float(0)
                     print(sell_oco_order)
 
         if self.dataframe_logging:
@@ -116,6 +117,7 @@ class Worker(Thread):
                     self.in_position = True
                     self.log_info(buy_market_order)
                     self.last_buy_order_price = float(buy_market_order['cost'])
+                    self.last_buy_order_qty = position_size
 
             else:
                 self.log_info(":::::::::> Holding already a position in the market, nothing to buy")
@@ -124,16 +126,16 @@ class Worker(Thread):
             self.log_info("==> Downtrend detected")
 
             if self.in_position:
-                position_size = self.free_balance()
-                self.log_info(f":::::::::> Selling {position_size} {self.market} at market price")
+                self.log_info(f":::::::::> Selling {self.last_buy_order_qty} {self.market} at market price")
                 try:
-                    sell_market_order = self.exchange.create_market_sell_order(self.market, position_size)
+                    sell_market_order = self.exchange.create_market_sell_order(self.market, self.last_buy_order_qty)
                 except Exception as e:
                     self.log_exception(e)
                     # send_email, telegram or whatsapp message
                 else:
                     self.in_position = False
                     self.last_buy_order_price = float(0)
+                    self.last_buy_order_qty = float(0)
                     self.log_info(sell_market_order)
             else:
                 self.log_info(":::::::::> Do not hold a position in the market, nothing to sell")
@@ -194,5 +196,5 @@ class Worker(Thread):
         schedule.every(int(self.polling_interval)).seconds.do(self.work)
         while True:
             schedule.run_pending()
-            time.sleep(1)
+            time.sleep(int(self.polling_interval))
 

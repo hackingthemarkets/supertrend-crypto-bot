@@ -57,7 +57,8 @@ class Bot:
 
             if len(markets) == 0:
                 # log proper message
-                print(f"Provided watchlist is empty or specified cryptos are not available under the {base_currency} market on {config_section} exchange")
+                print(
+                    f"Provided watchlist is empty or specified cryptos are not available under the {base_currency} market on {config_section} exchange")
                 break
 
             polling_interval = config['pollinginterval']
@@ -108,7 +109,7 @@ class Bot:
         return (free_balance * min(1, unlocked_capital)) / float(num_markets)
 
     @staticmethod
-    def get_bot_id(exchange_name: str, market: str, is_sandbox: bool): 
+    def get_bot_id(exchange_name: str, market: str, is_sandbox: bool):
         return exchange_name.lower() + "_" + market.replace("/", "_").lower() + ("_sandbox" if is_sandbox else "_live")
 
     @staticmethod
@@ -128,4 +129,3 @@ class Bot:
 
 
 Bot().run()
-
