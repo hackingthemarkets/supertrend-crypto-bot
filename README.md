@@ -3,9 +3,9 @@
 ## Get Started
 Following steps must be completed to get the MSCT up und running:
 
-1. Make a copy of the `settings.example.conf` and rename the copy to `settings.conf`
+1. Make a copy of the `exchanges.example.conf` and rename the copy to `exchanges.conf`
 ```shell
-cp settings.example.conf settings.conf
+cp exchanges.example.conf exchanges.conf
 ```
 
 2. Requesting API key and secret from your crypto exchange. Following steps show how to aquire a binance API Key and secret for testnet (sandbox mode).
@@ -13,7 +13,7 @@ cp settings.example.conf settings.conf
     - Go to `https://testnet.binance.vision` and login using your Github account
     - Then, click on `Generate HMAC_SHA256 Key` 
 
-3. Set your api key in the coresponding section of `settings.conf``
+3. Set your api key in the coresponding section of `exchanges.conf``
 ```conf
 [binance]
 ...
