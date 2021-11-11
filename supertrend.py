@@ -125,20 +125,20 @@ class Worker(Thread):
         if df['in_uptrend'][previous_row_index] and not df['in_uptrend'][last_row_index]:
             self.log_info("==> Downtrend detected")
 
-            if self.in_position:
-                self.log_info(f":::::::::> Selling {self.last_buy_order_qty} {self.market} at market price")
-                try:
-                    sell_market_order = self.exchange.create_market_sell_order(self.market, self.last_buy_order_qty)
-                except Exception as e:
-                    self.log_exception(e)
-                    # send_email, telegram or whatsapp message
-                else:
-                    self.in_position = False
-                    self.last_buy_order_price = float(0)
-                    self.last_buy_order_qty = float(0)
-                    self.log_info(sell_market_order)
-            else:
-                self.log_info(":::::::::> Do not hold a position in the market, nothing to sell")
+            # if self.in_position:
+            #     self.log_info(f":::::::::> Selling {self.last_buy_order_qty} {self.market} at market price")
+            #     try:
+            #         sell_market_order = self.exchange.create_market_sell_order(self.market, self.last_buy_order_qty)
+            #     except Exception as e:
+            #         self.log_exception(e)
+            #         # send_email, telegram or whatsapp message
+            #     else:
+            #         self.in_position = False
+            #         self.last_buy_order_price = float(0)
+            #         self.last_buy_order_qty = float(0)
+            #         self.log_info(sell_market_order)
+            # else:
+            #     self.log_info(":::::::::> Do not hold a position in the market, nothing to sell")
 
     @staticmethod
     def atr(data, period):
