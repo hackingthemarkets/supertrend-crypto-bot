@@ -1,5 +1,6 @@
-ta
-schedule
-ccxt
+ccxt==1.59.72
+schedule==1.1.0
+ta==0.7.0
 pandas
 numpy
+configobj==5.0.6
