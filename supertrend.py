@@ -1,3 +1,4 @@
+import utils
 import ccxt
 import config
 import schedule
@@ -10,7 +11,7 @@ pd.set_option('display.max_rows', None)
 # warnings.filterwarnings('ignore')
 
 
-exchange = ccxt.binance({
+account = ccxt.binance({
     "apiKey": config.API_BINANCE,
     "secret": config.SECRET_BINANCE,
 })
@@ -59,49 +60,63 @@ def supertrend(df, length=7, atr_multiplier=3):
     return df
 
 
-in_position = False
-
 def check_buy_sell_signals(df, coinpair):
-    global in_position
+    global is_in_position, position
 
     print("Checking for buy and sell signals")
-    print(df.tail(5))
+    print(df.tail(2))
     last_row_index = len(df.index) - 1
     previous_row_index = last_row_index - 1
 
+    # # Uncomment this to execute order immediately
+    # df.loc[last_row_index,'is_uptrend'] = True
+    # df.loc[previous_row_index,'is_uptrend'] = False
+
     if not df.loc[previous_row_index,'is_uptrend'] and df.loc[last_row_index,'is_uptrend']:
-        if not in_position:
-            print("Changed to uptrend, buy")
-            order = exchange.create_market_buy_order(coinpair, 0.05)
+        if not is_in_position:
+            print("> Changed to uptrend, buy")
+            position = lot / df.loc[last_row_index,'close'] 
+            order = account.create_market_buy_order(coinpair, position)
+            is_in_position = True
+            print('something')
+            utils.record_state(is_in_position, position)
             # print(order)
-            in_position = True
         else:
             print("Already in position, nothing to do")
     
     if df.loc[previous_row_index,'is_uptrend'] and not df.loc[last_row_index,'is_uptrend']:
-        if in_position:
-            print("changed to downtrend, sell")
-            order = exchange.create_market_sell_order(coinpair, 0.05)
+        if is_in_position:
+            print("> Changed to downtrend, sell")
+            order = account.create_market_sell_order(coinpair, position)
+            position = 0
+            is_in_position = False
+            print('something')
             # print(order)
-            in_position = False
         else:
             print("You aren't in position, nothing to sell")
 
 def run_bot(coinpair='ETH/USDT', timeframe='1m' ):
-    print(f"Fetching new bars for {datetime.now().isoformat()}")
-    bars = exchange.fetch_ohlcv(coinpair, timeframe, limit=100)
+    print(f"Fetching bars for {datetime.now()}")
+    bars = account.fetch_ohlcv(coinpair, timeframe, limit=100)
     df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
     supertrend_data = supertrend(df)
-    # print(supertrend_data)
 
     check_buy_sell_signals(supertrend_data, coinpair)
 
 
-schedule.every(1).seconds.do(run_bot)
+is_in_position = False
+position = 0
+lot = 20    # USDT
+
+# schedule.every(10).seconds.do(run_bot)
 
 
 while True:
-    schedule.run_pending()
-    time.sleep(1)
+    # schedule.run_pending()
+    # print(datetime.now())
+    little_delay = 0.1 # second, to make sure we have a new complete candle
+    # time.sleep(60 - time.time() % 60 + little_delay)
+    time.sleep(2)
+    run_bot('LINK/USDT')
