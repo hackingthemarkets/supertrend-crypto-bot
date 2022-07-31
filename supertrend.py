@@ -1,14 +1,13 @@
 import ccxt
 import config
 import schedule
-import numpy as np
 from datetime import datetime
 import time
 import pandas as pd
 pd.set_option('display.max_rows', None)
 
-import warnings
-warnings.filterwarnings('ignore')
+# import warnings
+# warnings.filterwarnings('ignore')
 
 
 exchange = ccxt.binance({
@@ -39,22 +38,22 @@ def supertrend(df, length=7, atr_multiplier=3):
     df['atr'] = atr(df, length)
     df['upperband'] = hl2 + (atr_multiplier * df['atr'])
     df['lowerband'] = hl2 - (atr_multiplier * df['atr'])
-    df['in_uptrend'] = True
+    df['is_uptrend'] = True
 
     for current in range(1, len(df.index)):
         previous = current - 1
 
         if df.loc[current,'close'] > df.loc[previous,'upperband']:
-            df.loc['in_uptrend'][current] = True
+            df.loc[current,'is_uptrend'] = True
         elif df.loc[current,'close'] < df.loc[previous,'lowerband']:
-            df.loc['in_uptrend'][current] = False
+            df.loc[current,'is_uptrend'] = False
         else:
-            df.loc[current,'in_uptrend'] = df.loc[previous,'in_uptrend']
+            df.loc[current,'is_uptrend'] = df.loc[previous,'is_uptrend']
 
-            if df.loc[current,'in_uptrend'] and df.loc[current,'lowerband'] < df.loc[previous,'lowerband']:
+            if df.loc[current,'is_uptrend'] and df.loc[current,'lowerband'] < df.loc[previous,'lowerband']:
                 df.loc[current,'lowerband'] = df.loc[previous,'lowerband']
 
-            if not df.loc[current,'in_uptrend'] and df.loc[current,'upperband'] > df.loc[previous,'upperband']:
+            if not df.loc[current,'is_uptrend'] and df.loc[current,'upperband'] > df.loc[previous,'upperband']:
                 df.loc[current,'upperband'] = df.loc[previous,'upperband']
         
     return df
@@ -70,7 +69,7 @@ def check_buy_sell_signals(df, coinpair):
     last_row_index = len(df.index) - 1
     previous_row_index = last_row_index - 1
 
-    if not df.loc[previous_row_index,'in_uptrend'] and df.loc[last_row_index,'in_uptrend']:
+    if not df.loc[previous_row_index,'is_uptrend'] and df.loc[last_row_index,'is_uptrend']:
         if not in_position:
             print("Changed to uptrend, buy")
             order = exchange.create_market_buy_order(coinpair, 0.05)
@@ -79,7 +78,7 @@ def check_buy_sell_signals(df, coinpair):
         else:
             print("Already in position, nothing to do")
     
-    if df.loc[previous_row_index,'in_uptrend'] and not df.loc[last_row_index,'in_uptrend']:
+    if df.loc[previous_row_index,'is_uptrend'] and not df.loc[last_row_index,'is_uptrend']:
         if in_position:
             print("changed to downtrend, sell")
             order = exchange.create_market_sell_order(coinpair, 0.05)

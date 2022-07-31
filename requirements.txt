@@ -1,5 +1,5 @@
-ta
 schedule
 ccxt
 pandas
-numpy
+datetime
+time
