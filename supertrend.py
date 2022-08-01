@@ -1,3 +1,5 @@
+from collections import namedtuple
+from turtle import pos
 import utils
 import ccxt
 import config
@@ -34,7 +36,7 @@ def atr(data, length):
     return atr
 
 
-def supertrend(df, length=7, atr_multiplier=3):
+def supertrend_format(df, length=7, atr_multiplier=3):
     hl2 = (df['high'] + df['low']) / 2
     df['atr'] = atr(df, length)
     df['upperband'] = hl2 + (atr_multiplier * df['atr'])
@@ -63,8 +65,6 @@ def supertrend(df, length=7, atr_multiplier=3):
 def check_buy_sell_signals(df, coinpair):
     global is_in_position, position
 
-    print("Checking for buy and sell signals")
-    print(df.tail(2))
     last_row_index = len(df.index) - 1
     previous_row_index = last_row_index - 1
 
@@ -74,49 +74,58 @@ def check_buy_sell_signals(df, coinpair):
 
     if not df.loc[previous_row_index,'is_uptrend'] and df.loc[last_row_index,'is_uptrend']:
         if not is_in_position:
-            print("> Changed to uptrend, buy")
             position = lot / df.loc[last_row_index,'close'] 
-            order = account.create_market_buy_order(coinpair, position)
+            account.create_market_buy_order(coinpair, position)
             is_in_position = True
-            print('something')
-            utils.record_state(is_in_position, position)
-            # print(order)
+            utils.trade_log(f"Uptrend,Buy,{is_in_position},{position},")
         else:
-            print("Already in position, nothing to do")
-    
-    if df.loc[previous_row_index,'is_uptrend'] and not df.loc[last_row_index,'is_uptrend']:
+            utils.trade_log(f"Already in position,-,{is_in_position},{position}")
+
+    elif df.loc[previous_row_index,'is_uptrend'] and not df.loc[last_row_index,'is_uptrend']:
         if is_in_position:
-            print("> Changed to downtrend, sell")
-            order = account.create_market_sell_order(coinpair, position)
+            account.create_market_sell_order(coinpair, position)
             position = 0
             is_in_position = False
-            print('something')
-            # print(order)
+            utils.trade_log(f"Downtrend,Sell,{is_in_position},{position},")
         else:
-            print("You aren't in position, nothing to sell")
+            utils.trade_log(f"No position,-,{is_in_position},{position}")
+    
+    else:
+        utils.trade_log('No signal,,,')
 
-def run_bot(coinpair='ETH/USDT', timeframe='1m' ):
-    print(f"Fetching bars for {datetime.now()}")
-    bars = account.fetch_ohlcv(coinpair, timeframe, limit=100)
+def run_bot(coinpair, timeframe):
+    utils.trade_log(f"\n{datetime.now()},")
+    bars = account.fetch_ohlcv(coinpair, timeframe, limit=200)
     df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
-    supertrend_data = supertrend(df)
+    supertrend_data = supertrend_format(df, length=supertrend_config.length, atr_multiplier=supertrend_config.multipler)
+    # print(supertrend_data.tail(50))
 
     check_buy_sell_signals(supertrend_data, coinpair)
 
 
+######### Config #########
 is_in_position = False
 position = 0
-lot = 20    # USDT
+lot = 50    # USDT
+coinpair = 'SOL/USDT'
+timeframe_in_minutes = 15
+timeframe='15m'
+supertrend_config = namedtuple('Supertrend_config', ['length', 'multipler'])._make([14, 2.5])
 
-# schedule.every(10).seconds.do(run_bot)
+######### Log #########
+utils.trade_log(f"""\n"Start config: is_in_position={is_in_position}, \
+position={position}, \
+lot={lot}, \
+coinpair={coinpair}, \
+timeframe_in_minutes={timeframe_in_minutes}, \
+timeframe={timeframe}, \
+{supertrend_config}" """)
 
-
+######### Run until it's terminated #########
 while True:
-    # schedule.run_pending()
-    # print(datetime.now())
-    little_delay = 0.1 # second, to make sure we have a new complete candle
-    # time.sleep(60 - time.time() % 60 + little_delay)
-    time.sleep(2)
-    run_bot('LINK/USDT')
+    little_delay = 0.1      # second, to make sure we have a new complete candle
+    # time.sleep(60*timeframe_in_minutes - time.time() % 60*timeframe_in_minutes + little_delay)
+    time.sleep(2)         # for testing
+    run_bot(coinpair=coinpair, timeframe=timeframe)
