@@ -1,9 +1,7 @@
 from collections import namedtuple
-from turtle import pos
 import utils
 import ccxt
 import config
-import schedule
 from datetime import datetime
 import time
 import pandas as pd
