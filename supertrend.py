@@ -118,6 +118,7 @@ coinpair = 'SOL/USDT'
 timeframe_in_minutes = 15
 timeframe='15m'
 supertrend_config = namedtuple('Supertrend_config', ['length', 'multipler'])._make([14, 2.5])
+little_delay = 0.1      # second, to make sure we have a new complete candle
 
 ######### Log #########
 utils.trade_log(f"""\n"Start config: is_in_position={is_in_position}, \
@@ -130,7 +131,6 @@ timeframe={timeframe}, \
 
 ######### Run until it's terminated #########
 while True:
-    little_delay = 0.1      # second, to make sure we have a new complete candle
-    # time.sleep(60*timeframe_in_minutes - time.time() % 60*timeframe_in_minutes + little_delay)
-    time.sleep(2)         # for testing
     run_bot(coinpair=coinpair, timeframe=timeframe)
+    # time.sleep(2)         # for testing
+    time.sleep(60*timeframe_in_minutes - time.time() % (60*timeframe_in_minutes) + little_delay)
