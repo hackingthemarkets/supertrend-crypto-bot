@@ -37,6 +37,8 @@ def atr(data, length):
 
 
 def supertrend_format(df, length=7, atr_multiplier=3):
+    '''
+    Return the dataframe with '''
     hl2 = (df['high'] + df['low']) / 2
     df['atr'] = atr(df, length)
     df['upperband'] = hl2 + (atr_multiplier * df['atr'])
@@ -79,7 +81,7 @@ def check_buy_sell_signals(df, coinpair):
             is_in_position = True
             utils.trade_log(f"Uptrend,Buy,{is_in_position},{position},")
         else:
-            utils.trade_log(f"Already in position,-,{is_in_position},{position}")
+            utils.trade_log(f"Already in position,-,{is_in_position},{position},")
 
     elif df.loc[previous_row_index,'is_uptrend'] and not df.loc[last_row_index,'is_uptrend']:
         if is_in_position:
@@ -88,22 +90,27 @@ def check_buy_sell_signals(df, coinpair):
             is_in_position = False
             utils.trade_log(f"Downtrend,Sell,{is_in_position},{position},")
         else:
-            utils.trade_log(f"No position,-,{is_in_position},{position}")
+            utils.trade_log(f"No position,-,{is_in_position},{position},")
     
     else:
-        utils.trade_log('No signal,,,')
+        utils.trade_log('No signal,,,,')
 
 def run_bot(coinpair, timeframe):
     utils.trade_log(f"\n{datetime.now()},")
+
     bars = account.fetch_ohlcv(coinpair, timeframe, limit=200)
     df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
     supertrend_data = supertrend_format(df, length=supertrend_config.length, atr_multiplier=supertrend_config.multipler)
     # print(supertrend_data.tail(50))
-
     check_buy_sell_signals(supertrend_data, coinpair)
 
+    utils.trade_log(f"{datetime.now()}")
+
+
+
+#========================#
 
 ######### Config #########
 is_in_position = False
