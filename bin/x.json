@@ -1,0 +1,79 @@
+{
+    "info": {
+        "symbol": "BTCUSDT",
+        "orderId": "9956604",
+        "orderListId": "-1",
+        "clientOrderId": "x-R4BD3S826c0fb5afe66382d9bbe239",
+        "transactTime": "1659368016443",
+        "price": "0.00000000",
+        "origQty": "0.00100000",
+        "executedQty": "0.00100000",
+        "cummulativeQuoteQty": "23.31865000",
+        "status": "FILLED",
+        "timeInForce": "GTC",
+        "type": "MARKET",
+        "side": "BUY",
+        "fills": [
+            {
+                "price": "23318.65000000",
+                "qty": "0.00100000",
+                "commission": "0.00000000",
+                "commissionAsset": "BTC",
+                "tradeId": "4186100"
+            }
+        ]
+    },
+    "id": "9956604",
+    "clientOrderId": "x-R4BD3S826c0fb5afe66382d9bbe239",
+    "timestamp": 1659368016443,
+    "datetime": "2022-08-01T15: 33: 36.443Z",
+    "lastTradeTimestamp": None,
+    "symbol": "BTC/USDT",
+    "type": "market",
+    "timeInForce": "GTC",
+    "postOnly": False,
+    "reduceOnly": None,
+    "side": "buy",
+    "price": 23318.65,
+    "stopPrice": None,
+    "amount": 0.001,
+    "cost": 23.31865,
+    "average": 23318.65,
+    "filled": 0.001,
+    "remaining": 0.0,
+    "status": "closed",
+    "fee": None,
+    "trades": [
+        {
+            "info": {
+                "price": "23318.65000000",
+                "qty": "0.00100000",
+                "commission": "0.00000000",
+                "commissionAsset": "BTC",
+                "tradeId": "4186100"
+            },
+            "timestamp": None,
+            "datetime": None,
+            "symbol": "BTC/USDT",
+            "id": "4186100",
+            "order": "9956604",
+            "type": "market",
+            "side": "buy",
+            "takerOrMaker": None,
+            "price": 23318.65,
+            "amount": 0.001,
+            "cost": 23.31865,
+            "fee": {
+                "cost": 0.0,
+                "currency": "BTC"
+            },
+            "fees": [
+                {
+                    "cost": 0.0,
+                    "currency": "BTC"
+                }
+            ]
+        }
+    ],
+    "fees": []
+}

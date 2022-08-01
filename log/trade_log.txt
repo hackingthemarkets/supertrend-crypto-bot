@@ -1,0 +1,19 @@
+"Start config: is_in_position=False, position=0, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-02 01:51:55.345063,No signal,,,,2022-08-02 01:51:57.183969
+2022-08-02 02:00:00.200063,No signal,,,,2022-08-02 02:00:00.605094
+"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=1, timeframe=1m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-02 02:01:54.403281,
+"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=1, timeframe=1m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-02 02:02:02.309428,No signal,,,,2022-08-02 02:02:03.874386
+2022-08-02 02:03:00.154895,No signal,,,,2022-08-02 02:03:00.644912
+"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=1, timeframe=1m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-02 02:03:14.597432,No signal,,,,2022-08-02 02:03:16.602382
+2022-08-02 02:04:00.544200,No signal,,,,2022-08-02 02:04:00.747634
+2022-08-02 02:05:00.560149,No signal,,,,2022-08-02 02:05:00.849485
+2022-08-02 02:06:00.559696,No signal,,,,2022-08-02 02:06:00.853514
+2022-08-02 02:07:00.559691,No signal,,,,2022-08-02 02:07:00.854421
+"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=1, timeframe=1m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-02 02:07:47.645328,No signal,,,,2022-08-02 02:07:50.127992
+2022-08-02 02:08:01.010987,No signal,,,,2022-08-02 02:08:01.275881
+2022-08-02 02:09:01.059377,No signal,,,,2022-08-02 02:09:01.314584
+2022-08-02 02:10:01.019325,No signal,,,,2022-08-02 02:10:01.283796

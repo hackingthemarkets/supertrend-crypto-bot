@@ -34,7 +34,7 @@ def atr(data, length):
     return atr
 
 
-def supertrend_format(df, length=7, atr_multiplier=3):
+def supertrend_format(df, length, atr_multiplier):
     '''
     Return the dataframe with '''
     hl2 = (df['high'] + df['low']) / 2
@@ -75,7 +75,8 @@ def check_buy_sell_signals(df, coinpair):
     if not df.loc[previous_row_index,'is_uptrend'] and df.loc[last_row_index,'is_uptrend']:
         if not is_in_position:
             position = lot / df.loc[last_row_index,'close'] 
-            account.create_market_buy_order(coinpair, position)
+            order = account.create_market_buy_order(coinpair, position)
+            position = order['filled']
             is_in_position = True
             utils.trade_log(f"Uptrend,Buy,{is_in_position},{position},")
         else:
@@ -83,8 +84,8 @@ def check_buy_sell_signals(df, coinpair):
 
     elif df.loc[previous_row_index,'is_uptrend'] and not df.loc[last_row_index,'is_uptrend']:
         if is_in_position:
-            account.create_market_sell_order(coinpair, position)
-            position = 0
+            order = account.create_market_sell_order(coinpair, position)
+            position = position - order['filled']
             is_in_position = False
             utils.trade_log(f"Downtrend,Sell,{is_in_position},{position},")
         else:
@@ -101,7 +102,7 @@ def run_bot(coinpair, timeframe):
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
     supertrend_data = supertrend_format(df, length=supertrend_config.length, atr_multiplier=supertrend_config.multipler)
-    # print(supertrend_data.tail(50))
+    print(supertrend_data.tail(10))
     check_buy_sell_signals(supertrend_data, coinpair)
 
     utils.trade_log(f"{datetime.now()}")
@@ -111,14 +112,14 @@ def run_bot(coinpair, timeframe):
 #========================#
 
 ######### Config #########
-is_in_position = False
-position = 0
+is_in_position = True
+position = 1.17
 lot = 50    # USDT
 coinpair = 'SOL/USDT'
-timeframe_in_minutes = 15
-timeframe='15m'
+timeframe_in_minutes = 1
+timeframe='1m'
 supertrend_config = namedtuple('Supertrend_config', ['length', 'multipler'])._make([14, 2.5])
-little_delay = 0.1      # second, to make sure we have a new complete candle
+little_delay = 1      # second, to make sure we have a new complete candle
 
 ######### Log #########
 utils.trade_log(f"""\n"Start config: is_in_position={is_in_position}, \
