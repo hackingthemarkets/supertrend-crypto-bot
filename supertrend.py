@@ -1,5 +1,4 @@
 from collections import namedtuple
-from xmlrpc.client import ProtocolError
 import utils
 import ccxt
 import config
@@ -135,18 +134,6 @@ timeframe={timeframe}, \
 while True:
     try:
         run_bot(coinpair=coinpair, timeframe=timeframe)
-    except ProtocolError as e:
-        print(e)
-        time.sleep(5)
-        continue
-    except ConnectionResetError as e:
-        print(e)
-        time.sleep(5)
-        continue
-    except ccxt.base.errors.NetworkError as e:
-        print(e)
-        time.sleep(5)
-        continue
     except Exception as e:
         print(e)
         time.sleep(5)
