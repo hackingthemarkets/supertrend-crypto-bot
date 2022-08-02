@@ -1,4 +1,5 @@
 from collections import namedtuple
+from xmlrpc.client import ProtocolError
 import utils
 import ccxt
 import config
@@ -112,14 +113,14 @@ def run_bot(coinpair, timeframe):
 #========================#
 
 ######### Config #########
-is_in_position = True
-position = 1.17
+is_in_position = False
+position = 0
 lot = 50    # USDT
 coinpair = 'SOL/USDT'
-timeframe_in_minutes = 1
-timeframe='1m'
+timeframe_in_minutes = 15
+timeframe='15m'
 supertrend_config = namedtuple('Supertrend_config', ['length', 'multipler'])._make([14, 2.5])
-little_delay = 1      # second, to make sure we have a new complete candle
+little_delay = 5      # second, to make sure the exchange adds a new candle
 
 ######### Log #########
 utils.trade_log(f"""\n"Start config: is_in_position={is_in_position}, \
@@ -132,6 +133,25 @@ timeframe={timeframe}, \
 
 ######### Run until it's terminated #########
 while True:
-    run_bot(coinpair=coinpair, timeframe=timeframe)
+    try:
+        run_bot(coinpair=coinpair, timeframe=timeframe)
+    except ProtocolError as e:
+        print(e)
+        time.sleep(5)
+        continue
+    except ConnectionResetError as e:
+        print(e)
+        time.sleep(5)
+        continue
+    except ccxt.base.errors.NetworkError as e:
+        print(e)
+        time.sleep(5)
+        continue
+    except Exception as e:
+        print(e)
+        time.sleep(5)
+        continue
+
+
     # time.sleep(2)         # for testing
     time.sleep(60*timeframe_in_minutes - time.time() % (60*timeframe_in_minutes) + little_delay)

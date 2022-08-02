@@ -1,19 +1,170 @@
+
 "Start config: is_in_position=False, position=0, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
-2022-08-02 01:51:55.345063,No signal,,,,2022-08-02 01:51:57.183969
-2022-08-02 02:00:00.200063,No signal,,,,2022-08-02 02:00:00.605094
+2022-08-01 14:38:08.006741,No signal,,,,2022-08-01 14:38:10.503286
+2022-08-01 14:45:00.119529,No signal,,,,2022-08-01 14:45:00.623982
+2022-08-01 15:00:00.104408,No signal,,,,2022-08-01 15:00:00.631310
+2022-08-01 15:15:00.200127,No signal,,,,2022-08-01 15:15:00.720471
+2022-08-01 15:30:00.130866,No signal,,,,2022-08-01 15:30:00.652440
+2022-08-01 15:45:00.156861,No signal,,,,2022-08-01 15:45:00.687380
+2022-08-01 16:00:00.200129,No signal,,,,2022-08-01 16:00:00.745789
+2022-08-01 16:15:00.152487,No signal,,,,2022-08-01 16:15:00.688878
+2022-08-01 16:30:00.192755,No signal,,,,2022-08-01 16:30:00.706534
+2022-08-01 16:45:00.186880,No signal,,,,2022-08-01 16:45:00.693002
+2022-08-01 17:00:00.186877,No signal,,,,2022-08-01 17:00:00.719222
+2022-08-01 17:15:00.130879,No signal,,,,2022-08-01 17:15:00.669375
+2022-08-01 17:30:00.159475,No signal,,,,2022-08-01 17:30:00.695303
+2022-08-01 17:45:00.116340,No signal,,,,2022-08-01 17:45:00.632410
+2022-08-01 18:00:00.200160,No signal,,,,2022-08-01 18:00:00.723651
+2022-08-01 18:15:00.200134,No signal,,,,2022-08-01 18:15:00.760196
+2022-08-01 18:30:00.200138,No signal,,,,2022-08-01 18:30:00.738835
+2022-08-01 18:45:00.174898,No signal,,,,2022-08-01 18:45:00.700898
+2022-08-01 19:00:00.102873,No signal,,,,2022-08-01 19:00:00.633417
+2022-08-01 19:15:00.200134,No signal,,,,2022-08-01 19:15:00.708245
+2022-08-01 19:30:00.154899,No signal,,,,2022-08-01 19:30:01.037163
+2022-08-01 19:45:00.176333,No signal,,,,2022-08-01 19:45:00.692213
+2022-08-01 20:00:00.148042,No signal,,,,2022-08-01 20:00:00.685325
+2022-08-01 20:15:00.186877,No signal,,,,2022-08-01 20:15:00.724613
+2022-08-01 20:30:00.200127,No signal,,,,2022-08-01 20:30:00.901526
+2022-08-01 20:45:00.192957,No signal,,,,2022-08-01 20:45:00.748574
+2022-08-01 21:00:00.188326,No signal,,,,2022-08-01 21:00:00.703895
+2022-08-01 21:15:00.200132,No signal,,,,2022-08-01 21:15:00.731054
+2022-08-01 21:30:00.130895,No signal,,,,2022-08-01 21:30:00.642686
+2022-08-01 21:45:00.162868,No signal,,,,2022-08-01 21:45:00.685422
+2022-08-01 22:00:00.182881,No signal,,,,2022-08-01 22:00:00.700547
+2022-08-01 22:15:00.186877,No signal,,,,2022-08-01 22:15:00.868138
+2022-08-01 22:30:00.200122,No signal,,,,2022-08-01 22:30:00.735979
+2022-08-01 22:45:00.200134,No signal,,,,2022-08-01 22:45:00.715565
+2022-08-01 23:00:00.195691,No signal,,,,2022-08-01 23:00:00.736719
+2022-08-01 23:15:00.134887,No signal,,,,2022-08-01 23:15:00.648294
+2022-08-01 23:30:00.120317,No signal,,,,2022-08-01 23:30:00.639384
+2022-08-01 23:45:00.182877,No signal,,,,2022-08-01 23:45:00.711877
+2022-08-02 00:00:00.200131,No signal,,,,2022-08-02 00:00:00.697754
+2022-08-02 00:15:00.116838,No signal,,,,2022-08-02 00:15:00.678284
+2022-08-02 00:30:00.134925,Uptrend,Buy,True,1.1706860220088973,2022-08-02 00:30:00.803048
+2022-08-02 00:45:00.130991,No signal,,,,2022-08-02 00:45:00.664228
+2022-08-02 01:00:00.132122,No signal,,,,2022-08-02 01:00:00.625589
+2022-08-02 01:15:00.106060,No signal,,,,2022-08-02 01:15:00.617952
+2022-08-02 01:30:00.107136,No signal,,,,2022-08-02 01:30:00.963609
+2022-08-02 01:45:00.103098,No signal,,,,2022-08-02 01:45:00.597683
+
+"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-02 01:58:43.055997,No signal,,,,2022-08-02 01:58:46.251657
+2022-08-02 02:00:00.170969,No signal,,,,2022-08-02 02:00:01.041577
+
+"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-02 02:11:55.552392,No signal,,,,2022-08-02 02:11:58.169330
+2022-08-02 02:15:01.920211,No signal,,,,2022-08-02 02:15:02.459595
+2022-08-02 02:30:01.845808,No signal,,,,2022-08-02 02:30:02.407051
+2022-08-02 02:45:01.826877,No signal,,,,2022-08-02 02:45:02.382941
+2022-08-02 03:00:01.866935,No signal,,,,2022-08-02 03:00:02.743033
+2022-08-02 03:15:01.850084,No signal,,,,2022-08-02 03:15:02.713178
+2022-08-02 03:30:01.834412,Downtrend,Sell,False,0.0,2022-08-02 03:30:03.070640
+2022-08-02 03:45:01.852852,No signal,,,,2022-08-02 03:45:02.698580
+2022-08-02 04:00:01.858917,No signal,,,,2022-08-02 04:00:02.995436
+2022-08-02 04:15:01.822869,No signal,,,,2022-08-02 04:15:02.677481
+2022-08-02 04:30:01.920129,No signal,,,,2022-08-02 04:30:02.805548
+2022-08-02 04:45:01.845851,No signal,,,,2022-08-02 04:45:02.743402
+2022-08-02 05:00:01.842095,No signal,,,,2022-08-02 05:00:02.683469
+2022-08-02 05:15:01.920114,No signal,,,,2022-08-02 05:15:02.879358
+2022-08-02 05:30:01.920132,No signal,,,,2022-08-02 05:30:02.916850
+2022-08-02 05:45:01.858882,No signal,,,,2022-08-02 05:45:02.760765
+2022-08-02 06:00:01.920224,
+
+2022-08-02 06:00:01.920224,Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 699, in urlopen
+    httplib_response = self._make_request(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 445, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 3, in raise_from
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 440, in _make_request
+    httplib_response = conn.getresponse()
+  File "/usr/lib/python3.9/http/client.py", line 1371, in getresponse
+    response.begin()
+  File "/usr/lib/python3.9/http/client.py", line 319, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.9/http/client.py", line 280, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.9/socket.py", line 704, in readinto
+    return self._sock.recv_into(b)
+  File "/usr/lib/python3.9/ssl.py", line 1241, in recv_into
+    return self.read(nbytes, buffer)
+  File "/usr/lib/python3.9/ssl.py", line 1099, in read
+    return self._sslobj.read(len, buffer)
+ConnectionResetError: [Errno 104] Connection reset by peer
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 755, in urlopen
+    retries = retries.increment(
+  File "/usr/lib/python3/dist-packages/urllib3/util/retry.py", line 532, in increment
+    raise six.reraise(type(error), error, _stacktrace)
+  File "/home/rodo/.local/lib/python3.9/site-packages/six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 699, in urlopen
+    httplib_response = self._make_request(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 445, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 3, in raise_from
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 440, in _make_request
+    httplib_response = conn.getresponse()
+  File "/usr/lib/python3.9/http/client.py", line 1371, in getresponse
+    response.begin()
+  File "/usr/lib/python3.9/http/client.py", line 319, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.9/http/client.py", line 280, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.9/socket.py", line 704, in readinto
+    return self._sock.recv_into(b)
+  File "/usr/lib/python3.9/ssl.py", line 1241, in recv_into
+    return self.read(nbytes, buffer)
+  File "/usr/lib/python3.9/ssl.py", line 1099, in read
+    return self._sslobj.read(len, buffer)
+urllib3.exceptions.ProtocolError: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/rodo/.local/lib/python3.9/site-packages/ccxt/base/exchange.py", line 591, in fetch
+    response = self.session.request(
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 542, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 655, in send
+    r = adapter.send(request, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/adapters.py", line 498, in send
+    raise ConnectionError(err, request=request)
+requests.exceptions.ConnectionError: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rodo/Documents/GitHub/supertrend-crypto-bot/supertrend.py", line 135, in <module>
+    run_bot(coinpair=coinpair, timeframe=timeframe)
+  File "/home/rodo/Documents/GitHub/supertrend-crypto-bot/supertrend.py", line 100, in run_bot
+    bars = account.fetch_ohlcv(coinpair, timeframe, limit=200)
+  File "/home/rodo/.local/lib/python3.9/site-packages/ccxt/binance.py", line 2400, in fetch_ohlcv
+    response = getattr(self, method)(self.extend(request, params))
+  File "/home/rodo/.local/lib/python3.9/site-packages/ccxt/base/exchange.py", line 497, in inner
+    return entry(_self, **inner_kwargs)
+  File "/home/rodo/.local/lib/python3.9/site-packages/ccxt/binance.py", line 5490, in request
+    response = self.fetch2(path, api, method, params, headers, body, config, context)
+  File "/home/rodo/.local/lib/python3.9/site-packages/ccxt/base/exchange.py", line 2618, in fetch2
+    return self.fetch(request['url'], request['method'], request['headers'], request['body'])
+  File "/home/rodo/.local/lib/python3.9/site-packages/ccxt/base/exchange.py", line 644, in fetch
+    raise NetworkError(details) from e
+ccxt.base.errors.NetworkError: binance GET https://api.binance.com/api/v3/klines?interval=15m&limit=200&symbol=SOLUSDT
+rodo@rodo-pi:~/Documents/GitHub/supertrend-crypto-bot$ AAAAAAAAA
+
+
+"Start config: is_in_position=False, position=0, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-02 11:00:35.993373,No position,-,False,0,2022-08-02 11:00:38.745930
+2022-08-02 11:15:01.832590,No signal,,,,2022-08-02 11:15:02.461153
+2022-08-02 11:30:01.860872,No signal,,,,2022-08-02 11:30:02.459383
+2022-08-02 11:45:01.851620,
 "Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=1, timeframe=1m, Supertrend_config(length=14, multipler=2.5)" 
-2022-08-02 02:01:54.403281,
-"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=1, timeframe=1m, Supertrend_config(length=14, multipler=2.5)" 
-2022-08-02 02:02:02.309428,No signal,,,,2022-08-02 02:02:03.874386
-2022-08-02 02:03:00.154895,No signal,,,,2022-08-02 02:03:00.644912
-"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=1, timeframe=1m, Supertrend_config(length=14, multipler=2.5)" 
-2022-08-02 02:03:14.597432,No signal,,,,2022-08-02 02:03:16.602382
-2022-08-02 02:04:00.544200,No signal,,,,2022-08-02 02:04:00.747634
-2022-08-02 02:05:00.560149,No signal,,,,2022-08-02 02:05:00.849485
-2022-08-02 02:06:00.559696,No signal,,,,2022-08-02 02:06:00.853514
-2022-08-02 02:07:00.559691,No signal,,,,2022-08-02 02:07:00.854421
-"Start config: is_in_position=True, position=1.17, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=1, timeframe=1m, Supertrend_config(length=14, multipler=2.5)" 
-2022-08-02 02:07:47.645328,No signal,,,,2022-08-02 02:07:50.127992
-2022-08-02 02:08:01.010987,No signal,,,,2022-08-02 02:08:01.275881
-2022-08-02 02:09:01.059377,No signal,,,,2022-08-02 02:09:01.314584
-2022-08-02 02:10:01.019325,No signal,,,,2022-08-02 02:10:01.283796
+2022-08-02 12:56:15.422949,No signal,,,,2022-08-02 12:56:16.499241
+2022-08-02 12:57:05.048569,No signal,,,,2022-08-02 12:57:05.248746
+2022-08-02 12:58:05.057160,No signal,,,,2022-08-02 12:58:05.256426
+2022-08-02 12:59:05.057189,No signal,,,,2022-08-02 12:59:05.306005
