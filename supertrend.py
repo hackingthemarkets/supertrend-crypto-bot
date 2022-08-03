@@ -62,19 +62,19 @@ def supertrend_format(df, length, atr_multiplier):
     return df
 
 
-def check_buy_sell_signals(df, coinpair):
+def check_buy_sell_signals(supertrend_data, coinpair):
     global is_in_position, position
 
-    last_row_index = len(df.index) - 1
+    last_row_index = len(supertrend_data.index) - 1
     previous_row_index = last_row_index - 1
 
     # # Uncomment this to execute order immediately
     # df.loc[last_row_index,'is_uptrend'] = True
     # df.loc[previous_row_index,'is_uptrend'] = False
 
-    if not df.loc[previous_row_index,'is_uptrend'] and df.loc[last_row_index,'is_uptrend']:
+    if not supertrend_data.loc[previous_row_index,'is_uptrend'] and supertrend_data.loc[last_row_index,'is_uptrend']:
         if not is_in_position:
-            position = lot / df.loc[last_row_index,'close'] 
+            position = lot / supertrend_data.loc[last_row_index,'close'] 
             order = account.create_market_buy_order(coinpair, position)
             position = order['filled']
             is_in_position = True
@@ -82,7 +82,7 @@ def check_buy_sell_signals(df, coinpair):
         else:
             utils.trade_log(f"Already in position,-,{is_in_position},{position},")
 
-    elif df.loc[previous_row_index,'is_uptrend'] and not df.loc[last_row_index,'is_uptrend']:
+    elif supertrend_data.loc[previous_row_index,'is_uptrend'] and not supertrend_data.loc[last_row_index,'is_uptrend']:
         if is_in_position:
             order = account.create_market_sell_order(coinpair, position)
             position = position - order['filled']
@@ -102,7 +102,8 @@ def run_bot(coinpair, timeframe):
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
     supertrend_data = supertrend_format(df, length=supertrend_config.length, atr_multiplier=supertrend_config.multipler)
-    print(supertrend_data.tail(10))
+    supertrend_data.drop(columns=['previous_close', 'high-low', 'high-pc', 'low-pc', 'tr', 'atr'], axis=0, inplace=True)
+    print('\n', supertrend_data.tail(4), '\n')
     check_buy_sell_signals(supertrend_data, coinpair)
 
     utils.trade_log(f"{datetime.now()}")

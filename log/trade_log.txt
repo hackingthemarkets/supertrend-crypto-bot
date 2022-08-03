@@ -168,3 +168,14 @@ rodo@rodo-pi:~/Documents/GitHub/supertrend-crypto-bot$ AAAAAAAAA
 2022-08-02 12:57:05.048569,No signal,,,,2022-08-02 12:57:05.248746
 2022-08-02 12:58:05.057160,No signal,,,,2022-08-02 12:58:05.256426
 2022-08-02 12:59:05.057189,No signal,,,,2022-08-02 12:59:05.306005
+"Start config: is_in_position=False, position=0, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-03 11:11:38.301014,
+2022-08-03 11:11:44.608355,
+"Start config: is_in_position=False, position=0, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-03 11:12:25.877402,
+"Start config: is_in_position=False, position=0, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-03 11:14:47.458098,
+2022-08-03 11:14:55.307305,
+"Start config: is_in_position=False, position=0, lot=50, coinpair=SOL/USDT, timeframe_in_minutes=15, timeframe=15m, Supertrend_config(length=14, multipler=2.5)" 
+2022-08-03 11:16:11.291637,
+2022-08-03 11:16:21.892783,No signal,,,,2022-08-03 11:16:23.182801
