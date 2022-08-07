@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
+    <!-- <script type="text/javascript" src="dygraph.js"></script> -->
+    <!-- <link rel="stylesheet" src="dygraph.css" /> -->
+</head>
+
+<body>
+    <div id="graphdiv3" style="width:1000px; height:700px;"></div>
+    <script type="text/javascript">
+        g3 = new Dygraph(
+            document.getElementById("graphdiv3"),
+            "Date,Temperature\n" +
+            "1,75\n" +
+            "2,70\n" +
+            "3,80\n" +
+            "4,62\n" +
+            "5,28\n" +
+            "6,12\n" +
+            "7,44\n" +
+            "8,55\n",
+            {
+                // options go here. See http://dygraphs.com/options.html
+                legend: 'always',
+                animatedZooms: true,
+                title: 'dygraphs :D'
+            }
+        );
+    </script>
+
+    <div id="graph"></div>
+</body>
+
+</html>
