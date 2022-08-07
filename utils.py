@@ -1,10 +1,6 @@
-# def record_state(is_in_position, position):
-#     file = open('log/state.txt', 'w')
-#     file.write(f"{is_in_position},{position}")
-#     file.close()
 
-def trade_log(message):
+def trade_log(message, filepath='log/trade_log.txt'):
     print(message, end='')
-    file = open('log/trade_log.txt', 'a')
+    file = open(filepath, 'a')
     file.write(message)
     file.close()

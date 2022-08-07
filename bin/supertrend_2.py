@@ -78,24 +78,24 @@ def check_buy_sell_signals(supertrend_data, coinpair):
             order = account.create_market_buy_order(coinpair, position)
             position = order['filled']
             is_in_position = True
-            utils.trade_log(f"Uptrend,Buy,{is_in_position},{position},")
+            utils.trade_log(f"Uptrend,Buy,{is_in_position},{position},", 'log/trade_log_2.txt')
         else:
-            utils.trade_log(f"Already in position,-,{is_in_position},{position},")
+            utils.trade_log(f"Already in position,-,{is_in_position},{position},", 'log/trade_log_2.txt')
 
     elif supertrend_data.loc[previous_row_index,'is_uptrend'] and not supertrend_data.loc[last_row_index,'is_uptrend']:
         if is_in_position:
             order = account.create_market_sell_order(coinpair, position)
             position = position - order['filled']
             is_in_position = False
-            utils.trade_log(f"Downtrend,Sell,{is_in_position},{position},")
+            utils.trade_log(f"Downtrend,Sell,{is_in_position},{position},", 'log/trade_log_2.txt')
         else:
-            utils.trade_log(f"No position,-,{is_in_position},{position},")
+            utils.trade_log(f"No position,-,{is_in_position},{position},", 'log/trade_log_2.txt')
     
     else:
-        utils.trade_log('No signal,,,,')
+        utils.trade_log('No signal,,,,', 'log/trade_log_2.txt')
 
 def run_bot(coinpair, timeframe):
-    utils.trade_log(f"\n{datetime.now()},")
+    utils.trade_log(f"\n{datetime.now()},", 'log/trade_log_2.txt')
 
     bars = account.fetch_ohlcv(coinpair, timeframe, limit=200)
     df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
@@ -106,7 +106,7 @@ def run_bot(coinpair, timeframe):
     print('\n', supertrend_data.tail(4), '\n')
     check_buy_sell_signals(supertrend_data, coinpair)
 
-    utils.trade_log(f"{datetime.now()}")
+    utils.trade_log(f"{datetime.now()}", 'log/trade_log_2.txt')
 
 
 
@@ -116,10 +116,10 @@ def run_bot(coinpair, timeframe):
 is_in_position = False
 position = 0
 lot = 50    # USDT
-coinpair = 'SOL/USDT'
+coinpair = 'MATIC/USDT'
 timeframe_in_minutes = 15
 timeframe='15m'
-supertrend_config = namedtuple('Supertrend_config', ['length', 'multipler'])._make([14, 2.5])
+supertrend_config = namedtuple('Supertrend_config', ['length', 'multipler'])._make([7, 4.5])
 little_delay = 5      # second, to make sure the exchange adds a new candle
 
 ######### Log #########
@@ -129,7 +129,7 @@ lot={lot}, \
 coinpair={coinpair}, \
 timeframe_in_minutes={timeframe_in_minutes}, \
 timeframe={timeframe}, \
-{supertrend_config}" """)
+{supertrend_config}" """, 'log/trade_log_2.txt')
 
 ######### Run until it's terminated #########
 while True:
