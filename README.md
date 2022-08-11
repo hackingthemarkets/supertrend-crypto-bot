@@ -2,14 +2,13 @@
 
 Supertrend bot using python (pandas and ccxt)
 
-#### Instruction
+Code modified from: https://www.youtube.com/watch?v=1PEyddA1y5E
 
-Class SupertrendBot (supertrend.py) is mainly used to run bot. Quickly read through the `__init__` of this class to learn how to initiate an object (an individual bot).  
+## Instruction
+
+Class SupertrendBot (`supertrend.py`) is mainly used to run bot. Quickly read through the `__init__` of this class to learn how to initiate an object (an individual bot).  
 
 An example of a bot is `bot_matic.py`.
-
-#### Modified from:
-* https://www.youtube.com/watch?v=1PEyddA1y5E
 
 ## Notes in implemetation
 - Filled position is different from calculated position (e.g. position = lot / price). It's safer to update position from exected order's returned result. Good for trade log and avoid getting error for selling more than what you actually bought.

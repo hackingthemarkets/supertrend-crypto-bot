@@ -21,7 +21,7 @@ class SupertrendBot:
                 timeframe='15m',
                 timeframe_in_minutes=15 ):
         '''
-        @params\n
+        @params \n
             `account` (`ccxt` exchange object)\n
             `coinpair` (string) E.G. `"MATIC/USDT"`\n   
             `trade_log_path` (string) path to a txt file to save trade log. E.G. `"log/trade_log_bot_matic.txt"` \n
@@ -31,7 +31,7 @@ class SupertrendBot:
             `position` (int) the amount coin in the position \n
             `lot` (int) the amount of base currency to buy each time \n
             `timeframe` (string) must be available in the exchange you choose in `account`. E.G. `"15m"` available in Binance Exchange \n
-            `timeframe_in_minutes` (int) the number of minutes in the chosen timeframe. E.G. 15 for `"15m"` \n
+            `timeframe_in_minutes` (int) the number of minutes in the chosen timeframe. E.G. 15 for `"15m"` timeframe \n
         '''
 
         self.account = account
@@ -158,8 +158,4 @@ class SupertrendBot:
             timeframe_in_seconds = 60*self.timeframe_in_minutes
             remaining_sleep_seconds_to_finish_the_timeframe = time.time() % (60*self.timeframe_in_minutes) 
             time.sleep(timeframe_in_seconds - remaining_sleep_seconds_to_finish_the_timeframe + little_delay)
-
-
-
-
-
+            
