@@ -19,7 +19,21 @@ class SupertrendBot:
                 position=0, 
                 lot=50,
                 timeframe='15m',
-                timeframe_in_minutes=15    ):
+                timeframe_in_minutes=15 ):
+        '''
+        @params\n
+            `account` (`ccxt` exchange object)\n
+            `coinpair` (string) E.G. `"MATIC/USDT"`\n   
+            `trade_log_path` (string) path to a txt file to save trade log. E.G. `"log/trade_log_bot_matic.txt"` \n
+            `length` (int) one of the params for Supertrend indicator \n
+            `multiplier` (int) one of the params for Supertrend indicator \n
+            `is_in_position` (bool) set `True` if you already have a position in the chosen coinpair. Otherwise, `False` \n
+            `position` (int) the amount coin in the position \n
+            `lot` (int) the amount of base currency to buy each time \n
+            `timeframe` (string) must be available in the exchange you choose in `account`. E.G. `"15m"` available in Binance Exchange \n
+            `timeframe_in_minutes` (int) the number of minutes in the chosen timeframe. E.G. 15 for `"15m"` \n
+        '''
+
         self.account = account
         self.coinpair = coinpair
         self.trade_log_path = trade_log_path
@@ -58,8 +72,8 @@ class SupertrendBot:
         return atr
 
 
-    def __supertrend_format(self, df):
-        ''' Return the dataframe with supertrend (aka. is_up_trend) signal column '''
+    def supertrend_format(self, df):
+        '''Return the dataframe with supertrend (aka. is_up_trend) signal column '''
 
         hl2 = (df['high'] + df['low']) / 2
         df['atr'] = self.__atr(df)
@@ -120,16 +134,19 @@ class SupertrendBot:
         df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
-        supertrend_data = self.__supertrend_format(df)
+        supertrend_data = self.supertrend_format(df)
         supertrend_data.drop(columns=['previous_close', 'high-low', 'high-pc', 'low-pc', 'tr', 'atr'], axis=0, inplace=True)
         print('\n', supertrend_data.tail(4), '\n')
         self.__check_buy_sell_signals(supertrend_data)
 
         utils.trade_log(f"{datetime.now()}", self.trade_log_path)
 
+
     def run_forever(self):
-        little_delay = 5
+        little_delay = 5    # The exchange will not update data until after >1 second of the closed timeframe
         while True:
+            # Sometimes, the bot has problems with Connection, so this 'try' here to 
+            # make sure the bot retry after 5 seconds
             try:
                 self.run_once()
             except Exception as e:

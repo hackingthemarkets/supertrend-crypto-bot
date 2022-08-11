@@ -1,0 +1,2 @@
+import supertrend_bot
+
