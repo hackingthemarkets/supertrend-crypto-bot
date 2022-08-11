@@ -27,7 +27,7 @@ Week 3 (25/7):
 - Use test API ByBit for forward testing, compare result after 2 weeks with shorten past data of the same length.
 
 Week 4 (1/8/2022):
-- Use real API Binance with little money (Current Profit/Loss: -3.5)
+- Use real API Binance with little money (Current Profit/Loss: +6.5)
 - 📍 Use larger historical data to find optimal configuration:
     - https://docs.coinapi.io/#limits
 - Plot chart for further insights: https://dygraphs.com/ + JS
