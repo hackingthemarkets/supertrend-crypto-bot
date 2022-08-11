@@ -2,6 +2,12 @@
 
 Supertrend bot using python (pandas and ccxt)
 
+#### Instruction
+
+Class SupertrendBot (supertrend.py) is mainly used to run bot. Quickly read through the `__init__` of this class to learn how to initiate an object (an individual bot).  
+
+An example of a bot is `bot_matic.py`.
+
 #### Modified from:
 * https://www.youtube.com/watch?v=1PEyddA1y5E
 
