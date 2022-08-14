@@ -51,6 +51,6 @@ account = ccxt.binance({
     "secret": config.SECRET_BINANCE,
 })
 
-order = account.create_market_buy_order('BUSD/USDT',50)
-print(order)
+order = account.create_market_sell_order('BUSD/USDT',50)
+print(order['average'])
 #################################

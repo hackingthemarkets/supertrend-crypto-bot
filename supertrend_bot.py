@@ -51,10 +51,9 @@ class SupertrendBot:
                         f"coinpair={coinpair}," +
                         f"timeframe_in_minutes={timeframe_in_minutes}," +
                         f"timeframe={timeframe}," +
-                        f"{self.config}\"", 
-                        trade_log_path)
+                        f"{self.config}\"", trade_log_path)
         # Log column names
-        utils.trade_log(f"\ntimestamp_start,signal,action,position,price,timestamp_end")
+        utils.trade_log(f"\ntimestamp_start,signal,action,position,price,timestamp_end", trade_log_path)
 
     def __tr(self, data):
         '''Calculate true range'''
@@ -113,7 +112,7 @@ class SupertrendBot:
                 order = self.account.create_market_buy_order(self.coinpair, self.position)
                 self.position = order['filled']
                 self.is_in_position = True
-                utils.trade_log(f"uptrend,buy,{self.position},{order.average},", self.trade_log_path)
+                utils.trade_log(f"uptrend,buy,{self.position},{order['average']},", self.trade_log_path)
             else:
                 utils.trade_log(f"uptrend,already_in_position,{self.position},{self.is_in_position},", self.trade_log_path)
 
@@ -122,10 +121,11 @@ class SupertrendBot:
                 order = self.account.create_market_sell_order(self.coinpair, self.position)
                 self.position = self.position - order['filled']
                 self.is_in_position = False
-                utils.trade_log(f"downtrend,sell,{self.is_in_position},{order.average},", self.trade_log_path)
+                utils.trade_log(f"downtrend,sell,{self.is_in_position},{order['average']},", self.trade_log_path)
             else:
                 utils.trade_log(f"downtrend,no_position,{self.position},{self.is_in_position},", self.trade_log_path)
         
+
         else:
             utils.trade_log('no_signal,,,,', self.trade_log_path)
 

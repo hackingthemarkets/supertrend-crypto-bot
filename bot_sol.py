@@ -10,10 +10,10 @@ account = ccxt.binance({
 bot_matic = supertrend_bot.SupertrendBot(
                 account=account,
                 coinpair='SOL/USDT',
-                trade_log_path='log/trade_log_bot_matic.txt',
+                trade_log_path='log/trade_log_bot_sol.txt',
                 length = 7, multiplier = 4.5,
-                is_in_position=False, 
-                position=0, 
+                is_in_position=True, 
+                position=1.05, 
                 lot=50,
                 timeframe='15m',
                 timeframe_in_minutes=15)
