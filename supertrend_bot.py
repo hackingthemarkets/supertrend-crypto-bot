@@ -53,6 +53,8 @@ class SupertrendBot:
                         f"timeframe={timeframe}," +
                         f"{self.config}\"", 
                         trade_log_path)
+        # Log column names
+        utils.trade_log(f"\ntimestamp_start,signal,action,position,price,timestamp_end")
 
     def __tr(self, data):
         '''Calculate true range'''
@@ -111,21 +113,21 @@ class SupertrendBot:
                 order = self.account.create_market_buy_order(self.coinpair, self.position)
                 self.position = order['filled']
                 self.is_in_position = True
-                utils.trade_log(f"Uptrend,Buy,{self.is_in_position},{self.position},", self.trade_log_path)
+                utils.trade_log(f"uptrend,buy,{self.position},{order.average},", self.trade_log_path)
             else:
-                utils.trade_log(f"Already in position,-,{self.is_in_position},{self.position},", self.trade_log_path)
+                utils.trade_log(f"uptrend,already_in_position,{self.position},{self.is_in_position},", self.trade_log_path)
 
         elif supertrend_data.loc[previous_row_index,'is_uptrend'] and not supertrend_data.loc[last_row_index,'is_uptrend']:
             if self.is_in_position:
                 order = self.account.create_market_sell_order(self.coinpair, self.position)
                 self.position = self.position - order['filled']
                 self.is_in_position = False
-                utils.trade_log(f"Downtrend,Sell,{self.is_in_position},{self.position},", self.trade_log_path)
+                utils.trade_log(f"downtrend,sell,{self.is_in_position},{order.average},", self.trade_log_path)
             else:
-                utils.trade_log(f"No position,-,{self.is_in_position},{self.position},", self.trade_log_path)
+                utils.trade_log(f"downtrend,no_position,{self.position},{self.is_in_position},", self.trade_log_path)
         
         else:
-            utils.trade_log('No signal,,,,', self.trade_log_path)
+            utils.trade_log('no_signal,,,,', self.trade_log_path)
 
     def run_once(self):
         utils.trade_log(f"\n{datetime.now()},", self.trade_log_path)

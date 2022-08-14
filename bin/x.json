@@ -77,3 +77,18 @@
     ],
     "fees": []
 }
+
+{'info': {'symbol': 'BUSDUSDT', 'orderId': '599837037', 'orderListId': '-1', 'clientOrderId': 'x-R4BD3S823370613b7079f26a3cd284', 'transactTime': '1660457152735', 'price': '0.00000000', 'origQty': '50.00000000', 'executedQty': '50.00000000', 'cummulativeQuoteQty': '49.99000000', 'status': 'FILLED', 'timeInForce': 'GTC', 'type': 'MARKET', 'side': 'BUY', 'fills': [
+            {'price': '0.99980000', 'qty': '50.00000000', 'commission': '0.00000000', 'commissionAsset': 'BNB', 'tradeId': '323373454'
+            }
+        ]
+    }, 'id': '599837037', 'clientOrderId': 'x-R4BD3S823370613b7079f26a3cd284', 'timestamp': 1660457152735, 'datetime': '2022-08-14T06: 05: 52.735Z', 'lastTradeTimestamp': None, 'symbol': 'BUSD/USDT', 'type': 'market', 'timeInForce': 'GTC', 'postOnly': False, 'reduceOnly': None, 'side': 'buy', 'price': 0.9998, 'stopPrice': None, 'amount': 50.0, 'cost': 49.99, 'average': 0.9998, 'filled': 50.0, 'remaining': 0.0, 'status': 'closed', 'fee': None, 'trades': [
+        {'info': {'price': '0.99980000', 'qty': '50.00000000', 'commission': '0.00000000', 'commissionAsset': 'BNB', 'tradeId': '323373454'
+            }, 'timestamp': None, 'datetime': None, 'symbol': 'BUSD/USDT', 'id': '323373454', 'order': '599837037', 'type': 'market', 'side': 'buy', 'takerOrMaker': None, 'price': 0.9998, 'amount': 50.0, 'cost': 49.99, 'fee': {'cost': 0.0, 'currency': 'BNB'
+            }, 'fees': [
+                {'cost': 0.0, 'currency': 'BNB'
+                }
+            ]
+        }
+    ], 'fees': []
+}

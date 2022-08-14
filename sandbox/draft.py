@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(0, '/home/rodo/Documents/GitHub/BitTracker')
+
 from collections import namedtuple
 import utils
 import ccxt
@@ -10,13 +13,13 @@ import requests
 
 ################################
 
-url = f"https://rest.coinapi.io/v1/ohlcv/BINANCE_SPOT_BTC_USDT/history?period_id=15MIN&time_start=2021-06-01T00:00:00&limit=100&output_format=csv"
-headers = {'X-CoinAPI-Key' : config.API_COINAPI2}
-r = requests.get(url, headers=headers)
-data = r.json()
+# url = f"https://rest.coinapi.io/v1/ohlcv/BINANCE_SPOT_BTC_USDT/history?period_id=15MIN&time_start=2021-06-01T00:00:00&limit=100&output_format=csv"
+# headers = {'X-CoinAPI-Key' : config.API_COINAPI2}
+# r = requests.get(url, headers=headers)
+# data = r.json()
 
-# print(r.data)
-print(data)
+# # print(r.data)
+# print(data)
 
 
 
@@ -33,21 +36,21 @@ print(data)
 
 
 ################################
-# import warnings
-# warnings.filterwarnings('ignore')
+import warnings
+warnings.filterwarnings('ignore')
 
-# account = ccxt.binance({
-#     "apiKey": config.API_TEST,
-#     "secret": config.SECRET_TEST,
-# })
-# account.set_sandbox_mode(True)
+account = ccxt.binance({
+    "apiKey": config.API_TEST,
+    "secret": config.SECRET_TEST,
+})
+account.set_sandbox_mode(True)
 
 
-# account = ccxt.binance({
-#     "apiKey": config.API_BINANCE,
-#     "secret": config.SECRET_BINANCE,
-# })
+account = ccxt.binance({
+    "apiKey": config.API_BINANCE,
+    "secret": config.SECRET_BINANCE,
+})
 
-# order = account.create_market_sell_order('SOL/USDT',1.1654321)
-# print(order['filled'])
+order = account.create_market_buy_order('BUSD/USDT',50)
+print(order)
 #################################
