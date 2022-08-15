@@ -74,8 +74,9 @@ class SupertrendBot:
 
 
     def supertrend_format(self, df):
-        '''Return the dataframe with supertrend (aka. is_up_trend) signal column '''
-
+        '''
+        Return the dataframe with supertrend (aka. is_up_trend) signal column 
+        '''
         hl2 = (df['high'] + df['low']) / 2
         df['atr'] = self.__atr(df)
         df['upperband'] = hl2 + (self.config.multiplier * df['atr'])
@@ -111,6 +112,7 @@ class SupertrendBot:
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
         supertrend_data = self.supertrend_format(df)
         return supertrend_data
+
 
     def __check_buy_sell_signals(self, supertrend_data):
         last_row_index = len(supertrend_data.index) - 1
