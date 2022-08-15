@@ -18,5 +18,5 @@ bot_matic = supertrend_bot.SupertrendBot(
                 timeframe='15m',
                 timeframe_in_minutes=15)
 
-
+# print('\n', bot_matic.get_supertrend_data().tail(100), '\n')
 bot_matic.run_forever()

@@ -21,17 +21,17 @@ class SupertrendBot:
                 timeframe='15m',
                 timeframe_in_minutes=15 ):
         '''
-        @params \n
-            `account` (`ccxt` exchange object)\n
-            `coinpair` (string) E.G. `"MATIC/USDT"`\n   
-            `trade_log_path` (string) path to a txt file to save trade log. E.G. `"log/trade_log_bot_matic.txt"` \n
-            `length` (int) one of the params for Supertrend indicator \n
-            `multiplier` (int) one of the params for Supertrend indicator \n
-            `is_in_position` (bool) set `True` if you already have a position in the chosen coinpair. Otherwise, `False` \n
-            `position` (int) the amount coin in the position \n
-            `lot` (int) the amount of base currency to buy each time \n
-            `timeframe` (string) must be available in the exchange you choose in `account`. E.G. `"15m"` available in Binance Exchange \n
-            `timeframe_in_minutes` (int) the number of minutes in the chosen timeframe. E.G. 15 for `"15m"` timeframe \n
+        ## Params
+        `account` (`ccxt` exchange object) \n
+        `coinpair` (string) E.G. `"MATIC/USDT"`\n   
+        `trade_log_path` (string) path to a txt file to save trade log. E.G. `"log/trade_log_bot_matic.txt"` \n
+        `length` (int) one of the params for Supertrend indicator \n
+        `multiplier` (int) one of the params for Supertrend indicator \n
+        `is_in_position` (bool) set `True` if you already have a position in the chosen coinpair. Otherwise, `False` \n
+        `position` (int) the amount coin in the position \n
+        `lot` (int) the amount of base currency to buy each time \n
+        `timeframe` (string) must be available in the exchange you choose in `account`. E.G. `"15m"` available in Binance Exchange \n
+        `timeframe_in_minutes` (int) the number of minutes in the chosen timeframe. E.G. 15 for `"15m"` timeframe \n
         '''
 
         self.account = account
@@ -95,8 +95,22 @@ class SupertrendBot:
                     df.loc[current,'lowerband'] = df.loc[previous,'lowerband']
                 if not df.loc[current,'is_uptrend'] and df.loc[current,'upperband'] > df.loc[previous,'upperband']:
                     df.loc[current,'upperband'] = df.loc[previous,'upperband']
+
+        df.drop(columns=['previous_close', 'high-low', 'high-pc', 'low-pc', 'tr', 'atr'], axis=0, inplace=True)
         return df
 
+
+    def get_supertrend_data(self, limit=1000):
+        '''
+        Get recent OHLCV + supertrend signal (max 1000). Can be used to view current supertrend status, upperbound, lowerbound, etc.
+        ## Params
+        `limit` (integer) the number of rows being fetched and attached with Supertrend signal. Maximum is 1000.
+        '''
+        bars = self.account.fetch_ohlcv(self.coinpair, self.timeframe, limit=limit)
+        df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+        supertrend_data = self.supertrend_format(df)
+        return supertrend_data
 
     def __check_buy_sell_signals(self, supertrend_data):
         last_row_index = len(supertrend_data.index) - 1
@@ -121,23 +135,17 @@ class SupertrendBot:
                 order = self.account.create_market_sell_order(self.coinpair, self.position)
                 self.position = self.position - order['filled']
                 self.is_in_position = False
-                utils.trade_log(f"downtrend,sell,{self.is_in_position},{order['average']},", self.trade_log_path)
+                utils.trade_log(f"downtrend,sell,{self.position},{order['average']},", self.trade_log_path)
             else:
                 utils.trade_log(f"downtrend,no_position,{self.position},{self.is_in_position},", self.trade_log_path)
         
-
         else:
             utils.trade_log('no_signal,,,,', self.trade_log_path)
 
+
     def run_once(self):
         utils.trade_log(f"\n{datetime.now()},", self.trade_log_path)
-
-        bars = self.account.fetch_ohlcv(self.coinpair, self.timeframe, limit=200)
-        df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-
-        supertrend_data = self.supertrend_format(df)
-        supertrend_data.drop(columns=['previous_close', 'high-low', 'high-pc', 'low-pc', 'tr', 'atr'], axis=0, inplace=True)
+        supertrend_data = self.get_supertrend_data()
         print('\n', supertrend_data.tail(4), '\n')
         self.__check_buy_sell_signals(supertrend_data)
 
@@ -160,4 +168,5 @@ class SupertrendBot:
             timeframe_in_seconds = 60*self.timeframe_in_minutes
             remaining_sleep_seconds_to_finish_the_timeframe = time.time() % (60*self.timeframe_in_minutes) 
             time.sleep(timeframe_in_seconds - remaining_sleep_seconds_to_finish_the_timeframe + little_delay)
-            
+
+
