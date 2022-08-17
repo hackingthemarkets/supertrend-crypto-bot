@@ -1,0 +1,4 @@
+
+
+"Start config: is_in_position=True,position=1.05,lot=50,coinpair=SOL/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end

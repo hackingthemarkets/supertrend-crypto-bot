@@ -33,8 +33,10 @@ Week 3 (25/7):
 
 Week 4 (1/8/2022):
 - Use real API Binance with little money (Current Profit/Loss: +6.5)
-- 📍 Use larger historical data to find optimal configuration:
+- Use larger historical data to find optimal configuration:
     - https://docs.coinapi.io/#limits
+    - 📍 Split bull/bear data
+    - Choose best config from overall, test on bull/bear
 - Plot chart for further insights: https://dygraphs.com/ + JS
 
 In queue:
@@ -49,6 +51,7 @@ In queue:
 - TA-Lib (Python): https://mrjbq7.github.io/ta-lib/
 - Toi di code dao: https://www.youtube.com/watch?v=WlO4lkvyLvI
 - Indicator: https://github.com/thanhnguyennguyen/trading-indicator 
+- Visualisation: https://github.com/yongghongg/stock-screener/blob/main/supertrend_demo_medium.ipynb / https://medium.datadriveninvestor.com/the-supertrend-implementing-screening-backtesting-in-python-70e8f88f383d
 
 ## Notes
 - 1000 datapoints of 5m time-frame cover 3.6 days => $12

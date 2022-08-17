@@ -1,0 +1,38 @@
+
+
+"Start config: is_in_position=True,position=53.8,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+2022-08-15 12:09:46.071115,no_signal,,,,2022-08-15 12:09:47.281668
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=MATIC/USDT,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
+timestamp_start,signal,action,position,price,timestamp_end

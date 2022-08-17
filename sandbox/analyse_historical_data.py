@@ -34,7 +34,7 @@ fee = 0.005
 # for i in range(1,500): 
 for i in range(1,len(df.index)):
     current, previous = i, i-1
-
+    
     # BUY
     if not supertrend_data.loc[previous,'is_uptrend'] and supertrend_data.loc[current,'is_uptrend']:
         if not is_in_position:
@@ -63,8 +63,8 @@ for i in range(1,len(df.index)):
         else:
             supertrend_data.loc[current,'order'] = 'sell_but_not_in_position'
     # NO SIGNAL
-    else:
-        supertrend_data.loc[current,'order'] = 'na'
+    # else:
+    #     supertrend_data.loc[current,'order'] = ''
 
 
 supertrend_data.to_csv('sandbox/backtest_result/matic_15m.csv', index=False, index_label=False)
