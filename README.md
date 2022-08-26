@@ -53,6 +53,15 @@ In queue:
 - Indicator: https://github.com/thanhnguyennguyen/trading-indicator 
 - Visualisation: https://github.com/yongghongg/stock-screener/blob/main/supertrend_demo_medium.ipynb / https://medium.datadriveninvestor.com/the-supertrend-implementing-screening-backtesting-in-python-70e8f88f383d
 
+## Mics bookmarks for CAB420
+- https://towardsdatascience.com/how-to-get-started-building-a-stock-cryptocurrency-forex-trading-program-2abbf0a4729f
+- https://thecitadelpub.com/elons-lethal-mistake-predicting-the-stock-price-of-tesla-with-twitter-and-machine-learning-5e89282ce75f
+- https://medium.datadriveninvestor.com/get-up-to-date-financial-ratios-p-e-p-b-and-more-of-stocks-using-python-4b53dd82908f
+- https://www.youtube.com/watch?v=xfzGZB4HhEE
+- https://www.youtube.com/watch?v=z9wt01WW9go&list=WL&index=100
+- https://towardsdatascience.com/machine-learning-for-day-trading-27c08274df54
+- https://www.mdpi.com/2673-2688/2/4/30/htm
+
 ## Notes
 - 1000 datapoints of 5m time-frame cover 3.6 days => $12
 - 1000 datapoints of 15m ............... 10 days => $16
