@@ -1,6 +1,7 @@
 # supertrend-bot
 
 Supertrend bot using python (pandas and ccxt).  
+
 At its core, the Supertrend calculates an upperbound and lower bound and use them as threshold to buy/sell. Due to the trending nature of cryptocurrency, trailing stop for orders is analysed (by me) and proved to be suitable and bring great profit (great enough to cancel out multiple lost trades). 
 
 However, it's not efficient during sideway + volatile period. Therefore, you can consider to turn the bot off for time like this.
