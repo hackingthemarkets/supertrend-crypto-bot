@@ -1,11 +1,6 @@
 import sys
 sys.path.insert(0, '/home/rodo/Documents/GitHub/BitTracker')
-
-from collections import namedtuple
-import csv
 import config
-from datetime import datetime
-import time
 import requests
 
 # BTC
@@ -50,13 +45,13 @@ def get_and_save(API, coin, savefilename, custom_url=False):
 
     download = requests.get(url)
     decoded_content = download.content.decode('utf-8')
-    file = open(f"sandbox/historical_data/{savefilename}_binance_original.csv", 'w')
+    file = open(f"sandbox/historical_data/{savefilename}_original.csv", 'w')
     file.write(decoded_content)
     file.close()
     print('Done: ' + coin )
 
 # get_and_save(config.API_COINAPI1, 'DOGE', 'doge_4h')
-# get_and_save(config.API_COINAPI2, 'MATIC', 'sol_4h')
+# get_and_save(config.API_COINAPI2, 'MATIC', 'matic_4h')
 # get_and_save(config.API_COINAPI3, 'SOL', 'matic_4h')
 # get_and_save(config.API_COINAPI4, 'SOL', 'matic_4h')
 # get_and_save(config.API_COINAPI5, 'SOL', 'matic_4h')

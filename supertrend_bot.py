@@ -19,7 +19,8 @@ class SupertrendBot:
                 position=0, 
                 lot=50,
                 timeframe='15m',
-                timeframe_in_minutes=15 ):
+                timeframe_in_minutes=15,
+                log=False):
         '''
         ## Params
         `account` (`ccxt` exchange object) \n
@@ -32,6 +33,7 @@ class SupertrendBot:
         `lot` (int) the amount of base currency to buy each time \n
         `timeframe` (string) must be available in the exchange you choose in `account`. E.G. `"15m"` available in Binance Exchange \n
         `timeframe_in_minutes` (int) the number of minutes in the chosen timeframe. E.G. 15 for `"15m"` timeframe \n
+        `log` (boolean) Set `True` to log the bot's trade. Default is `False` \n
         '''
 
         self.account = account
@@ -43,17 +45,19 @@ class SupertrendBot:
         self.timeframe = timeframe
         self.timeframe_in_minutes = timeframe_in_minutes
         self.config = namedtuple('Supertrend_config', ['length', 'multiplier'])._make([length, multiplier])
-
+        self.log = log 
+        
         # Log start configuration
-        utils.trade_log(f"\n\n\"Start config: is_in_position={is_in_position}," +
-                        f"position={position}," +
-                        f"lot={lot}," +
-                        f"coinpair={coinpair}," +
-                        f"timeframe_in_minutes={timeframe_in_minutes}," +
-                        f"timeframe={timeframe}," +
-                        f"{self.config}\"", trade_log_path)
-        # Log column names
-        utils.trade_log(f"\ntimestamp_start,signal,action,position,price,timestamp_end", trade_log_path)
+        if self.log:
+            utils.trade_log(f"\n\n\"Start config: is_in_position={is_in_position}," +
+                            f"position={position}," +
+                            f"lot={lot}," +
+                            f"coinpair={coinpair}," +
+                            f"timeframe_in_minutes={timeframe_in_minutes}," +
+                            f"timeframe={timeframe}," +
+                            f"{self.config}\"", trade_log_path)
+            # Log column names
+            utils.trade_log(f"\ntimestamp_start,signal,action,position,price,timestamp_end", trade_log_path)
 
     def __tr(self, data):
         '''Calculate true range'''

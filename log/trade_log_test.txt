@@ -29,3 +29,63 @@ timestamp_start,signal,action,position,price,timestamp_end
 
 "Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=7, multiplier=4.5)"
 timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2.0, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
+
+"Start config: is_in_position=False,position=0,lot=50,coinpair=,timeframe_in_minutes=15,timeframe=15m,Supertrend_config(length=2, multiplier=1.0)"
+timestamp_start,signal,action,position,price,timestamp_end
