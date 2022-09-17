@@ -46,18 +46,17 @@ class SupertrendBot:
         self.timeframe_in_minutes = timeframe_in_minutes
         self.config = namedtuple('Supertrend_config', ['length', 'multiplier'])._make([length, multiplier])
         self.log = log 
-        
+
         # Log start configuration
-        if self.log:
-            utils.trade_log(f"\n\n\"Start config: is_in_position={is_in_position}," +
-                            f"position={position}," +
-                            f"lot={lot}," +
-                            f"coinpair={coinpair}," +
-                            f"timeframe_in_minutes={timeframe_in_minutes}," +
-                            f"timeframe={timeframe}," +
-                            f"{self.config}\"", trade_log_path)
-            # Log column names
-            utils.trade_log(f"\ntimestamp_start,signal,action,position,price,timestamp_end", trade_log_path)
+        utils.trade_log(f"\n\n\"Start config: is_in_position={is_in_position}," +
+                        f"position={position}," +
+                        f"lot={lot}," +
+                        f"coinpair={coinpair}," +
+                        f"timeframe_in_minutes={timeframe_in_minutes}," +
+                        f"timeframe={timeframe}," +
+                        f"{self.config}\"", trade_log_path, self.log)
+        # Log column names
+        utils.trade_log(f"\ntimestamp_start,signal,action,position,price,timestamp_end", trade_log_path, self.log)
 
     def __tr(self, data):
         '''Calculate true range'''
@@ -132,30 +131,30 @@ class SupertrendBot:
                 order = self.account.create_market_buy_order(self.coinpair, self.position)
                 self.position = order['filled']
                 self.is_in_position = True
-                utils.trade_log(f"uptrend,buy,{self.position},{order['average']},", self.trade_log_path)
+                utils.trade_log(f"uptrend,buy,{self.position},{order['average']},", self.trade_log_path, self.log)
             else:
-                utils.trade_log(f"uptrend,already_in_position,{self.position},{self.is_in_position},", self.trade_log_path)
+                utils.trade_log(f"uptrend,already_in_position,{self.position},{self.is_in_position},", self.trade_log_path, self.log)
 
         elif supertrend_data.loc[previous_row_index,'is_uptrend'] and not supertrend_data.loc[last_row_index,'is_uptrend']:
             if self.is_in_position:
                 order = self.account.create_market_sell_order(self.coinpair, self.position)
                 self.position = self.position - order['filled']
                 self.is_in_position = False
-                utils.trade_log(f"downtrend,sell,{self.position},{order['average']},", self.trade_log_path)
+                utils.trade_log(f"downtrend,sell,{self.position},{order['average']},", self.trade_log_path, self.log)
             else:
-                utils.trade_log(f"downtrend,no_position,{self.position},{self.is_in_position},", self.trade_log_path)
+                utils.trade_log(f"downtrend,no_position,{self.position},{self.is_in_position},", self.trade_log_path, self.log)
         
         else:
-            utils.trade_log('no_signal,,,,', self.trade_log_path)
+            utils.trade_log('no_signal,,,,', self.trade_log_path, self.log)
 
 
     def run_once(self):
-        utils.trade_log(f"\n{datetime.now()},", self.trade_log_path)
+        utils.trade_log(f"\n{datetime.now()},", self.trade_log_path, self.log)
         supertrend_data = self.get_supertrend_data()
         print('\n', supertrend_data.tail(4), '\n')
         self.__check_buy_sell_signals(supertrend_data)
 
-        utils.trade_log(f"{datetime.now()}", self.trade_log_path)
+        utils.trade_log(f"{datetime.now()}", self.trade_log_path, self.log)
 
 
     def run_forever(self):
