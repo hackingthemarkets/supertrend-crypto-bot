@@ -11,7 +11,7 @@ bot_matic = supertrend_bot.SupertrendBot(
                 account=account,
                 coinpair='MATIC/USDT',
                 trade_log_path='log/trade_log_bot_matic.txt',
-                length = 7, multiplier = 4.5,
+                length = 4, multiplier = 19,
                 is_in_position=True, 
                 position=53.8, 
                 lot=50,

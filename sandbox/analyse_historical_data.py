@@ -1,12 +1,12 @@
 
 import sys
-from unittest import result
 sys.path.insert(0, '/home/rodo/Documents/GitHub/BitTracker')
-import pandas, numpy
+sys.path.insert(0, '.')
+import pandas, numpy, time
 import supertrend_bot
 # pandas.set_option('display.max_rows', None)
 
-
+marking_timestamp = int(time.time()%1000)
 
 # BACKTEST
 class ResultRecorder:
@@ -25,7 +25,7 @@ class ResultRecorder:
     def add_new_row(self, row_data):
         self.results = pandas.concat([self.results, pandas.DataFrame([row_data])])
 
-    def save_in_csv(self, name='sandbox/backtest_result/results_summary.csv'):
+    def save_in_csv(self, name=f"sandbox/backtest_result/results_summary_{marking_timestamp}.csv"):
         self.results.to_csv(name, index=False, index_label=False)
 
     def get_profit_order_number(self):
@@ -42,8 +42,12 @@ class ResultRecorder:
     def get_average_loss(self):
         return numpy.average(self.profit_and_loss_dict['loss'])
 
+    def reset_stats(self):
+        self.profit_and_loss_dict = {'profit': [], 'loss': []}
+        self.order_number = 0
 
-def run_back_test(coin, length, multiplier):
+
+def run_back_test(length, multiplier, coin=None, timeframe=None, df=None):
     # Define config for bot
     bot = supertrend_bot.SupertrendBot(
                     account='',
@@ -51,25 +55,27 @@ def run_back_test(coin, length, multiplier):
                     trade_log_path='log/trade_log_test.txt',
                     length = length, multiplier = multiplier)
     
-    # Format data with supertrend signals
-    df = pandas.read_csv(f"sandbox/historical_data/{coin}_{timeframe}_original.csv")
+    # Get dataframe if not passed
+    if len(df) == 0:
+        df = pandas.read_csv(f"sandbox/historical_data/{coin}_{timeframe}_original.csv")
+        df['timestamp'] = df['time_period_start']
+        df['open'] = df['price_open']
+        df['high'] = df['price_high']
+        df['low'] = df['price_low']
+        df['close'] = df['price_close']
+        df.drop(['time_period_start', 'time_open', 
+                'price_open', 'price_high', 'price_low', 
+                'price_close', 'volume_traded', 'trades_count'], axis=1)
+        df = df.iloc[::-1].reset_index()
+        print('length_of_df =', len(df), end=' ')
     
-    df['timestamp'] = df['time_period_start']
-    df['open'] = df['price_open']
-    df['high'] = df['price_high']
-    df['low'] = df['price_low']
-    df['close'] = df['price_close']
-    df.drop(['time_period_start', 'time_open', 
-            'price_open', 'price_high', 'price_low', 
-            'price_close', 'volume_traded', 'trades_count'], axis=1)
-    df = df.iloc[::-1].reset_index()
-    print('length_of_df =', len(df), end=' ')
+    # Format data with supertrend signals
     supertrend_data = bot.supertrend_format(df)
 
     is_in_position = False
     position = 0
     lot = 100
-    balance = 1000
+    balance = 0
     fee = 0.005
 
     for i in range(1,len(df.index)):
@@ -112,55 +118,72 @@ def run_back_test(coin, length, multiplier):
 
 
 
+
+
+
+
 result_recorder = ResultRecorder()
-coins = ('ada', 'btc', 'doge', 'eth', 'matic', 'sol', 'trx', 'xrp')
-timeframes = ('15m', '1h', '4h');  length_in_days = (1/24/4, 1/24, 1/6)
-config_lengths = numpy.arange(2, 19, 1)
-config_multipliers = numpy.arange(1, 19.5, 0.5)
-# config_lengths = (3,)
-# config_multipliers = (5,)
 
-for coin in coins:
-    print('\n'+'='*50)
-    print('coin =', coin)
-    for timeframe, length_in_day in zip(timeframes, length_in_days):
-        print('timeframe =', timeframe)
-        for length in config_lengths:
-            print('length =', length, end='  ')
-            for multiplier in config_multipliers:
-                print('multiplier =', multiplier, end=' ')
+def main():
+    trend = '_bear'
+    coins = ('ada', 'btc', 'doge', 'eth', 'matic', 'sol', 'trx', 'xrp')
+    timeframes = ('15m', '1h', '4h');  length_in_days = (1/24/4, 1/24, 1/6)
+    config_lengths = numpy.arange(4, 19, 1)
+    config_multipliers = numpy.arange(4, 20.5, 0.5)
 
-                supertrend_data, balance = run_back_test(coin, length, multiplier)
-                
-                result_recorder.add_new_row({
-                    'coinpair': coin,
-                    'length_in_days': length_in_day*len(supertrend_data), 
-                    'balance': balance, 
-                    'config_length': length, 
-                    'config_multiplier': multiplier, 
-                    'no_of_orders': result_recorder.order_number, 
-                    'number_of_profit_order': result_recorder.get_profit_order_number(), 
-                    'average_profit': result_recorder.get_average_profit(), 
-                    'number_of_loss_order': result_recorder.get_loss_order_number(), 
-                    'average_loss': result_recorder.get_average_loss()
-                })
-                ## Save trade history
-                # supertrend_data.to_csv(f"sandbox/backtest_result/{coin}_{timeframe}.csv", index=False, index_label=False)
-            print()
-result_recorder.save_in_csv()
+    coins = ('btc',) # 'sol',) # 'btc', 'doge', 'eth',  'trx', 'xrp')
+    timeframes = ('15m', );  length_in_days = (1/24/4, )
+    # config_lengths = (8,9,)
+    # config_multipliers = (18,)
+    trend = ''
 
+    for coin in coins:
+        print('\n'+'='*50)
+        print('coin =', coin)
+        for timeframe, length_in_day in zip(timeframes, length_in_days):
+            print('timeframe =', timeframe)
+            df = pandas.read_csv(f"sandbox/historical_data/{coin}_{timeframe}_original{trend}.csv")
+            df['timestamp'] = df['time_period_start']
+            df['open'] = df['price_open']
+            df['high'] = df['price_high']
+            df['low'] = df['price_low']
+            df['close'] = df['price_close']
+            df.drop(['time_period_start', 'time_open', 
+                    'price_open', 'price_high', 'price_low', 
+                    'price_close', 'volume_traded', 'trades_count'], axis=1)
+            df = df.iloc[::-1].reset_index()
+            print('length_of_df =', len(df), end=' ')
 
-# TODO
-# trade_log function: log or not
-# list config with greatest profit from top down
+            for length in config_lengths:
+                print('length =', length)
+                for multiplier in config_multipliers:
+                    print('multiplier =', multiplier, end=' ')
 
+                    supertrend_data, balance = run_back_test(length, multiplier, df=df)
+                    
+                    result_recorder.add_new_row({
+                        'coinpair': coin,
+                        'length_in_days': length_in_day*len(supertrend_data), 
+                        'balance': balance, 
+                        'config_length': length, 
+                        'config_multiplier': multiplier, 
+                        'no_of_orders': result_recorder.order_number, 
+                        'number_of_profit_order': result_recorder.get_profit_order_number(), 
+                        'average_profit': result_recorder.get_average_profit(), 
+                        'number_of_loss_order': result_recorder.get_loss_order_number(), 
+                        'average_loss': result_recorder.get_average_loss(),
+                        'avarage_pnl_per_month': balance / (length_in_day*len(supertrend_data)) * 30,
+                        'profit_amounts': f"\"{result_recorder.get_profit_order()}\"",
+                        'loss_amounts': f"\"{result_recorder.get_loss_order()}\"",
+                    })
+                    ## Save trade history
+                    # supertrend_data.to_csv(f"sandbox/backtest_result/{coin}_{timeframe}.csv", index=False, index_label=False)
+                    result_recorder.reset_stats()
+                    result_recorder.save_in_csv()
+                print()
 
+main()
 
-
-
-
-
-
-
-
+# TODO:
+# - P/L Distribution graphs
 

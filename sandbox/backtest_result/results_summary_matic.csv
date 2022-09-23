@@ -1,0 +1,3 @@
+coinpair,length_in_days,balance,config_length,config_multiplier,no_of_orders,number_of_profit_order,average_profit,number_of_loss_order,average_loss,avarage_pnl_per_month
+matic,457.8125,186.33427653185413,8,18,42,18,18.867462961805803,24,-6.386669032527095,12.210300714715355
+matic,457.8125,188.39789632228272,9,18,40,18,18.400430218481297,22,-6.491356709562755,12.345527677091564
