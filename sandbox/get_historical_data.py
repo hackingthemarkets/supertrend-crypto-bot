@@ -34,10 +34,10 @@ import requests
 
 def get_and_save(API, coin, savefilename, custom_url=False):
     if custom_url == False:
-        # url = f"https://rest.coinapi.io/v1/ohlcv/KRAKEN_SPOT_{coin}_USD/history?"+\
+        # url = f"https://rest.coinapi.io/v1/ohlcv/BITFINEX_SPOT_{coin}_USD/history?"+\
         # url = f"https://rest.coinapi.io/v1/ohlcv/BITSTAMP_SPOT_{coin}_USD/history?"+\
-        # url = f"https://rest.coinapi.io/v1/ohlcv/BINANCE_SPOT_{coin}_USDT/history?" + \
-        url = f"https://rest.coinapi.io/v1/ohlcv/BITFINEX_SPOT_{coin}_USD/history?"+\
+        # url = f"https://rest.coinapi.io/v1/ohlcv/KRAKEN_SPOT_{coin}_USDT/history?"+\
+        url = f"https://rest.coinapi.io/v1/ohlcv/BINANCE_SPOT_{coin}_USDT/history?" + \
             "period_id=1HRS&time_end=2022-09-24T00:00:00&"+\
             f"limit=100000&output_format=csv&apiKey={API}"
         # Timeframe param: HRS, MIN
@@ -51,13 +51,13 @@ def get_and_save(API, coin, savefilename, custom_url=False):
     file.close()
     print('Done: ' + coin )
 
-# get_and_save(config.API_COINAPI1, 'DOGE', 'doge_4h')
-# get_and_save(config.API_COINAPI2, 'MATIC', 'matic_4h')
+# get_and_save(config.API_COINAPI1, 'DOGE', 'doge_15m')
+# get_and_save(config.API_COINAPI2, 'DOGE', 'doge_1h_2')
 # get_and_save(config.API_COINAPI3, 'SOL', 'matic_4h')
 # get_and_save(config.API_COINAPI4, 'ETH', 'eth_15m_2')
 # get_and_save(config.API_COINAPI5, 'ETH', 'eth_15m_3')
-get_and_save(config.API_COINAPI6, 'ETH', 'eth_1h_bfn')
-# get_and_save(config.API_COINAPI7, 'TRX', 'trx_4h')
+# get_and_save(config.API_COINAPI6, 'ETH', 'eth_1h_bfn')
+get_and_save(config.API_COINAPI7, 'DOGE', 'doge_1h_2')
 # get_and_save(config.API_COINAPI8, 'XRP', 'xrp_4h')
 # get_and_save(config.API_COINAPI9, 'DOGE', 'doge_4h')
 # get_and_save(config.API_COINAPI10, 'ETH', 'eth_4h')
