@@ -125,7 +125,10 @@ class SupertrendBot:
         # df.loc[last_row_index,'is_uptrend'] = True
         # df.loc[previous_row_index,'is_uptrend'] = False
 
-        if not supertrend_data.loc[previous_row_index,'is_uptrend'] and supertrend_data.loc[last_row_index,'is_uptrend']:
+        switch_to_uptrend = not supertrend_data.loc[previous_row_index,'is_uptrend'] and supertrend_data.loc[last_row_index,'is_uptrend']
+        switch_to_downtrend = supertrend_data.loc[previous_row_index,'is_uptrend'] and not supertrend_data.loc[last_row_index,'is_uptrend']
+        
+        if switch_to_uptrend:
             if not self.is_in_position:
                 self.position = self.lot / supertrend_data.loc[last_row_index,'close'] 
                 order = self.account.create_market_buy_order(self.coinpair, self.position)
@@ -135,7 +138,7 @@ class SupertrendBot:
             else:
                 utils.trade_log(f"uptrend,already_in_position,{self.position},{self.is_in_position},", self.trade_log_path, self.log)
 
-        elif supertrend_data.loc[previous_row_index,'is_uptrend'] and not supertrend_data.loc[last_row_index,'is_uptrend']:
+        elif switch_to_downtrend:
             if self.is_in_position:
                 order = self.account.create_market_sell_order(self.coinpair, self.position)
                 self.position = self.position - order['filled']
