@@ -20,7 +20,7 @@ An example of a bot is [`bot_matic.py`](/bot_matic.py).
 
 
 ## Notes in implemetation
-- Filled position is different from calculated position (e.g. position = lot / price). It's safer to update position from exected order's returned result. Good for trade log and avoid getting error for selling more than what you actually bought.
+- Filled position is different from calculated position (e.g. position = lot / price). It's safer to update position from executed order's returned result. Good for trade log and avoid getting error for selling more than what you actually bought.
 - Exchange requires >1 second or much more to update its prices. So if you request prices miliseconds right after the candle closes, you WILL NOT get the latest price candle (latest price row). [Read more here.](https://docs.ccxt.com/en/latest/manual.html#notes-on-latency)
 - Choosing the optimal configuration when trading on small timeframe (e.g. 15m) require large historical data. Because 1000 data points of 15m timeframe only covers ~10 days, which is very bias (specifically, what if it's downtrend during that period)
 
@@ -44,8 +44,9 @@ Week 4 (29/8/2022):
 - Use larger historical data to find optimal configuration https://docs.coinapi.io/#limits
 
 Week 5 (05/09/2022)
-- 📍 Get top10 config, average loss, % config loss
-- Split bull/bear data, choose best config from overall, test on bull/bear
+- Get top10 config, average loss, % config loss
+- 📍 Plot scatter charts of pnl vs config; pnl distribution of top20
+- Choose 20 best configs, split bear period, test on bear, rank the test results
 
 Week  ()
 - Plot chart for further insights: https://dygraphs.com/ + JS
