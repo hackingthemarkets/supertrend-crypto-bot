@@ -128,11 +128,11 @@ def main():
     trend = '_bear'
     coins = ('ada', 'btc', 'doge', 'eth', 'matic', 'sol', 'trx', 'xrp')
     timeframes = ('15m', '1h', '4h');  length_in_days = (1/24/4, 1/24, 1/6)
-    config_lengths = numpy.arange(4, 19, 1)
-    config_multipliers = numpy.arange(4, 20.5, 0.5)
+    config_lengths = numpy.arange(11, 28, 1)
+    config_multipliers = numpy.arange(15, 30, 0.5)
 
     coins = ('btc',) # 'sol',) # 'btc', 'doge', 'eth',  'trx', 'xrp')
-    timeframes = ('15m', );  length_in_days = (1/24/4, )
+    timeframes = ('1h', );  length_in_days = (1/24, )
     # config_lengths = (8,9,)
     # config_multipliers = (18,)
     trend = ''
