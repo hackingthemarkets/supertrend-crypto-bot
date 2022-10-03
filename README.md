@@ -45,8 +45,9 @@ Week 4 (29/8/2022):
 
 Week 5 (05/09/2022)
 - Get top10 config, average loss, % config loss
-- 📍 Plot scatter charts of pnl vs config; pnl distribution of top20
-- Choose 20 best configs, split bear period, test on bear, rank the test results
+- Plot balance vs config; pnl distribution of top10
+- 📍 Choose best configs that in top10 highest balance and in toplist from analysis
+- Split bear/recent-year periods, test on these periods, rank the test results
 
 Week  ()
 - Plot chart for further insights: https://dygraphs.com/ + JS

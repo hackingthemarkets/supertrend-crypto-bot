@@ -8,7 +8,6 @@ import supertrend_bot
 
 marking_timestamp = int(time.time()%1000)
 
-# BACKTEST
 class ResultRecorder:
     def __init__(self):
         self.profit_and_loss_dict = {'profit': [], 'loss': []}
@@ -25,7 +24,7 @@ class ResultRecorder:
     def add_new_row(self, row_data):
         self.results = pandas.concat([self.results, pandas.DataFrame([row_data])])
 
-    def save_in_csv(self, name=f"sandbox/backtest_result/results_summary_{marking_timestamp}.csv"):
+    def save_in_csv(self, name=f"sandbox/backtest_result/backtest_summary_{marking_timestamp}.csv"):
         self.results.to_csv(name, index=False, index_label=False)
 
     def get_profit_order_number(self):
@@ -120,8 +119,6 @@ def run_back_test(length, multiplier, coin=None, timeframe=None, df=None):
 
 
 
-
-
 result_recorder = ResultRecorder()
 
 def main():
@@ -184,6 +181,5 @@ def main():
 
 main()
 
-# TODO:
-# - P/L Distribution graphs
+
 
