@@ -46,23 +46,19 @@ Week 4 (29/8/2022):
 Week 5 (05/09/2022)
 - Get top10 config, average loss, % config loss
 - Plot balance vs config; pnl distribution of top10
-- 📍 Choose best configs that in top10 highest balance and in toplist from analysis
+
+Week 39 / 2022:
+- Choose best configs that in top10 highest balance and in toplist from analysis
 - Split bear/recent-year periods, test on these periods, rank the test results
+- 📍 Quickly re-evaluate altcoins on bear market (make sure it’s bear)
+- Display backtest on chart on Web App using https://dygraphs.com/ + JS
 
-Week  ()
-- Plot chart for further insights: https://dygraphs.com/ + JS
+
+- Calculate risk-adjusted return [https://www.investopedia.com/terms/r/riskadjustedreturn.asp](https://www.investopedia.com/terms/r/riskadjustedreturn.asp)
 - More buttons and inputs to operate bot from browser
-
-Week  ()
-- Code ND estimator
-- Code trade logic for ND+Supertrend
-- Backtest, analyse 
-
-
-In queue:
-- ALGO: Write buy/sell logic: Set order when RSI escaped overbought>75/oversold<25 (threshold) zone, TP/SL: half if move x amount (if touch TP, set SL to entry), half if touch the opposite threshold
+- ALGO: Code Nadaraya-Watson estimator + Try trade logic for Nadaraya-Watson + Supertrend
 - ALGO: Use deep learning (e.g., LSTM) 
-- Alarm for every execution
+- Alarm for every execution 
 
 
 ## Others
