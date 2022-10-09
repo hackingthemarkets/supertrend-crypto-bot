@@ -48,14 +48,17 @@ Week 5 (05/09/2022)
 - Plot balance vs config; pnl distribution of top10
 
 Week 39 / 2022:
-- Choose best configs that in top10 highest balance and in toplist from analysis
-- Split bear/recent-year periods, test on these periods, rank the test results
+- Choose 10 configs that are in toplist config and have the highest balance: Check [`sandbox/backtest_result/best_configs_backtest_btc.csv`](sandbox/backtest_result/best_configs_backtest_btc.csv)
+- Analyse BitTracker performance in bear/recent-year periods on BTC/USD with best configs found: Risk is pretty large (max -90%) in a bear market, but acceptable compared to the profit in a bull market (+200%)
+
+Week 40 / 2022:
 - 📍 Quickly re-evaluate altcoins on bear market (make sure it’s bear)
 - Display backtest on chart on Web App using https://dygraphs.com/ + JS
+- Re-plan final product (what functionalities, features is it going to have?)
 
-
+Future:
 - Calculate risk-adjusted return [https://www.investopedia.com/terms/r/riskadjustedreturn.asp](https://www.investopedia.com/terms/r/riskadjustedreturn.asp)
-- More buttons and inputs to operate bot from browser
+- More buttons and inputs to operate bot from web app
 - ALGO: Code Nadaraya-Watson estimator + Try trade logic for Nadaraya-Watson + Supertrend
 - ALGO: Use deep learning (e.g., LSTM) 
 - Alarm for every execution 
@@ -78,14 +81,3 @@ Week 39 / 2022:
 - https://towardsdatascience.com/machine-learning-for-day-trading-27c08274df54
 - https://www.mdpi.com/2673-2688/2/4/30/htm
 
-
-
-<!-- 
-## Notes
-Profit from $100
-- 1000 datapoints of 5m time-frame cover 3.6 days => $12
-- 1000 datapoints of 15m ............... 10 days => $16
-- 1000 datapoints of 1h  ............... 40 days => $36
-- 1000 datapoints of 4h  ............... 160 days (5.3 months) => $75 
-
--->
