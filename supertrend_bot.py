@@ -86,6 +86,7 @@ class SupertrendBot:
         df['lowerband'] = hl2 - (self.config.multiplier * df['atr'])
         df['is_uptrend'] = True
 
+        # Add 'is_uptrend' column to signal the bot
         for current in range(1, len(df.index)):
             previous = current - 1
 
@@ -111,7 +112,7 @@ class SupertrendBot:
         `limit` (integer) the number of rows being fetched and attached with Supertrend signal. Maximum is 1000.
         '''
         bars = self.account.fetch_ohlcv(self.coinpair, self.timeframe, limit=limit)
-        df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+        df = pd.DataFrame(bars[:-1], columns=['timestamp', 'open', 'high', 'low', 'close', 'volume']) # [:,-1] to Remove the last unfinished candle
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
         supertrend_data = self.supertrend_format(df)
         return supertrend_data

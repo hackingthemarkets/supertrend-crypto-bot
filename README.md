@@ -1,6 +1,6 @@
-# supertrend-bot
+# BitTracker
 
-Supertrend bot using python (pandas and ccxt).  
+A trading bot utilising SuperTrend Algorithm.
 
 At its core, the Supertrend calculates an upperbound and lower bound and use them as threshold to buy/sell. Due to the trending nature of cryptocurrency, trailing stop for orders is analysed (by me) and proved to be suitable and bring great profit (great enough to cancel out multiple lost trades). 
 
@@ -63,6 +63,9 @@ Future:
 - ALGO: Use deep learning (e.g., LSTM) 
 - Alarm for every execution 
 
+## Dependencies
+- Pandas
+- CCXT
 
 ## Others
 - Price API: https://messari.io/api/docs
