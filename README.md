@@ -6,7 +6,7 @@ At its core, the Supertrend calculates an upperbound and lower bound and use the
 
 However, it's not efficient during sideway + volatile period. Therefore, you can consider to turn the bot off for time like this.
 
-Here is the screenshot as a demonstration of Supertrend Indicator in TradingView. `Buy` is placed at the end of red line and `Sell` is placed at the end of green line.  
+Here is a demo screenshot of Supertrend Indicator in TradingView. `Buy` is placed at the end of red line and `Sell` is placed at the end of green line.  
 ![Screenshot](/media/Screenshot.png)
 
 Code modified from: https://www.youtube.com/watch?v=1PEyddA1y5E
