@@ -9,20 +9,17 @@ However, it's not efficient during sideway + volatile period. Therefore, you can
 Here is a demo screenshot of Supertrend Indicator in TradingView. `Buy` is placed at the end of red line and `Sell` is placed at the end of green line.  
 ![Screenshot](/media/Screenshot.png)
 
-Code modified from: https://www.youtube.com/watch?v=1PEyddA1y5E
+Code modified from https://www.youtube.com/watch?v=1PEyddA1y5E
 
+## Dependencies
+- Pandas
+- CCXT
 
 ## Instruction
 
 Class SupertrendBot (`supertrend.py`) is used to initiate bot's configuration and has necessary functions to run your bot. Quickly read through the `__init__` of this class to get an idea on what to include in its object initiation.
 
 An example of a bot is [`bot_matic.py`](/bot_matic.py).
-
-
-## Notes in implemetation
-- Filled position is different from calculated position (e.g. position = lot / price). It's safer to update position from executed order's returned result. Good for trade log and avoid getting error for selling more than what you actually bought.
-- Exchange requires >1 second or much more to update its prices. So if you request prices miliseconds right after the candle closes, you WILL NOT get the latest price candle (latest price row). [Read more here.](https://docs.ccxt.com/en/latest/manual.html#notes-on-latency)
-- Choosing the optimal configuration when trading on small timeframe (e.g. 15m) require large historical data. Because 1000 data points of 15m timeframe only covers ~10 days, which is very bias (specifically, what if it's downtrend during that period)
 
 
 # Roadmap
@@ -56,16 +53,21 @@ Week 40 / 2022:
 - Display backtest on chart on Web App using https://dygraphs.com/ + JS
 - Re-plan final product (what functionalities, features is it going to have?)
 
+
 Future:
-- Calculate risk-adjusted return [https://www.investopedia.com/terms/r/riskadjustedreturn.asp](https://www.investopedia.com/terms/r/riskadjustedreturn.asp)
+- Calculate [risk-adjusted return](https://www.investopedia.com/terms/r/riskadjustedreturn.asp) / [Calmar Ratio](https://www.investopedia.com/terms/c/calmarratio.asp) to choose best config
 - More buttons and inputs to operate bot from web app
 - ALGO: Code Nadaraya-Watson estimator + Try trade logic for Nadaraya-Watson + Supertrend
 - ALGO: Use deep learning (e.g., LSTM) 
 - Alarm for every execution 
 
-## Dependencies
-- Pandas
-- CCXT
+
+
+## Notes in implemetation
+- Filled position is different from calculated position (e.g. position = lot / price). It's safer to update position from executed order's returned result. Good for trade log and avoid getting error for selling more than what you actually bought.
+- Exchange requires >1 second or much more to update its prices. So if you request prices miliseconds right after the candle closes, you WILL NOT get the latest price candle (latest price row). [Read more here.](https://docs.ccxt.com/en/latest/manual.html#notes-on-latency)
+- Choosing the optimal configuration when trading on small timeframe (e.g. 15m) require large historical data. Because 1000 data points of 15m timeframe only covers ~10 days, which is very bias (specifically, what if it's downtrend during that period)
+
 
 ## Others
 - Price API: https://messari.io/api/docs
@@ -75,7 +77,7 @@ Future:
 - Visualisation: https://github.com/yongghongg/stock-screener/blob/main/supertrend_demo_medium.ipynb / https://medium.datadriveninvestor.com/the-supertrend-implementing-screening-backtesting-in-python-70e8f88f383d
 
 
-## Mics bookmarks for CAB420
+## Mics bookmarks of CAB420
 - https://towardsdatascience.com/how-to-get-started-building-a-stock-cryptocurrency-forex-trading-program-2abbf0a4729f
 - https://thecitadelpub.com/elons-lethal-mistake-predicting-the-stock-price-of-tesla-with-twitter-and-machine-learning-5e89282ce75f
 - https://medium.datadriveninvestor.com/get-up-to-date-financial-ratios-p-e-p-b-and-more-of-stocks-using-python-4b53dd82908f
