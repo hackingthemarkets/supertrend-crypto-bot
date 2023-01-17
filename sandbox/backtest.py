@@ -27,7 +27,7 @@ class ResultRecorder:
 
     def save_in_csv(self, name=None):
         if name == None: 
-            name = f"sandbox/backtest_result/backtest_summary_{self.marking_timestamp}.csv"
+            name = f"sandbox/individual_backtest/backtest_summary_{self.marking_timestamp}.csv"
         self.results.to_csv(name, index=False, index_label=False)
 
     def get_profit_order_number(self):
@@ -44,7 +44,7 @@ class ResultRecorder:
     def get_average_loss(self):
         return numpy.average(self.profit_and_loss_dict['loss'])
 
-    def reset_stats(self):
+    def reset(self):
         self.profit_and_loss_dict = {'profit': [], 'loss': []}
         self.order_number = 0
 
@@ -122,29 +122,37 @@ def backtest(length, multiplier, result_recorder, df=None, coin=None, timeframe=
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 result_recorder = ResultRecorder()
 
 def main():
     trend = '_bear'
-    coins = ('ada', 'btc', 'doge', 'eth', 'matic', 'sol', 'trx', 'xrp')
-    timeframes = ('15m', '1h', '4h');  length_in_days = (1/24/4, 1/24, 1/6)
-    config_lengths = numpy.arange(11, 28, 1)
-    config_multipliers = numpy.arange(15, 30, 0.5)
+    coins = ('btc', 'doge', 'eth', 'matic')
+    timeframes = ('1h', '4h');  length_in_days = (1/24, 1/6)
+    config_lengths = numpy.arange(4, 28, 1)
+    config_multipliers = numpy.arange(5, 30, 0.5)
 
-    coins = ('btc',) # 'sol',) # 'btc', 'doge', 'eth',  'trx', 'xrp')
-    timeframes = ('1h', );  length_in_days = (1/24, )
-    # config_lengths = (8,9,)
-    # config_multipliers = (18,)
     trend = ''
 
     for coin in coins:
-        print('\n'+'='*50)
-        print('coin =', coin)
+        print('='*50)
         backtest(coin, timeframes, length_in_days, config_lengths, config_multipliers, 
-                trend=trend,
-                savefilename=None)
+                    trend=trend,
+                    savefilename=None)
+
         for timeframe, length_in_day in zip(timeframes, length_in_days):
-            print('timeframe =', timeframe)
+            print(f'coin = {coin}, timeframe = {timeframe}')
             df = pandas.read_csv(f"sandbox/historical_data/{coin}_{timeframe}_original{trend}.csv")
 
             # Rename columns and drop some to reduce memory weight
@@ -160,11 +168,10 @@ def main():
             print('length_of_df =', len(df), end=' ')
 
             for length in config_lengths:
-                print('length =', length)
                 for multiplier in config_multipliers:
-                    print('multiplier =', multiplier, end=' ')
+                    print(f'length = {length}, multiplier = {multiplier}')
 
-                    supertrend_data, balance = backtest(length, multiplier, df=df)
+                    supertrend_data, balance = backtest(length, multiplier, result_recorder, df=df)
                     
                     result_recorder.add_new_row({
                         'coinpair': coin,
@@ -181,10 +188,10 @@ def main():
                         'profit_amounts': f"\"{result_recorder.get_profit_order()}\"",
                         'loss_amounts': f"\"{result_recorder.get_loss_order()}\"",
                     })
-                    ## Save trade history
-                    # supertrend_data.to_csv(f"sandbox/backtest_result/{coin}_{timeframe}.csv", index=False, index_label=False)
+
+                    ## Save trade history for each configuration of each coin and timeframe combination
                     result_recorder.save_in_csv()
-                    result_recorder.reset_stats()
+                    result_recorder.reset()
                 print()
 
 # main()
